@@ -11,9 +11,10 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? "Server=localhost;Database=realestate;User=root;Password=yourpassword;";
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 36));
 
         services.AddDbContext<RealEstateDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+            options.UseMySql(connectionString, serverVersion));
 
         return services;
     }
