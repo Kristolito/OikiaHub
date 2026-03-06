@@ -1,0 +1,25 @@
+﻿# Build artifacts
+**/bin/
+**/obj/
+**/dist/
+
+# Node modules
+**/node_modules/
+
+# Logs
+*.log
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Vite
+realestate-web/.vite/
