@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import PageTitle from '../components/PageTitle'
 import PropertyCard from '../components/PropertyCard'
 import SearchFilters, { type PropertyFilterState } from '../components/SearchFilters'
+import useAuthState from '../hooks/useAuthState'
+import { getMyFavorites } from '../services/favoritesService'
 import { getAreas, getCities, getProperties, type LookupItem, type PropertyListItemResponse } from '../services/propertyService'
 
 const defaultFilters: PropertyFilterState = {
@@ -23,6 +25,7 @@ const defaultFilters: PropertyFilterState = {
 }
 
 function Properties() {
+  const { isAuthenticated } = useAuthState()
   const [searchParams, setSearchParams] = useSearchParams()
   const [filters, setFilters] = useState<PropertyFilterState>(defaultFilters)
   const [items, setItems] = useState<PropertyListItemResponse[]>([])
@@ -32,6 +35,7 @@ function Properties() {
   const [error, setError] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     const next = { ...defaultFilters }
@@ -53,6 +57,22 @@ function Properties() {
       setCities(data)
     })()
   }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setFavoriteIds(new Set())
+      return
+    }
+
+    void (async () => {
+      try {
+        const favorites = await getMyFavorites()
+        setFavoriteIds(new Set(favorites.map((x) => x.propertyId)))
+      } catch {
+        setFavoriteIds(new Set())
+      }
+    })()
+  }, [isAuthenticated])
 
   useEffect(() => {
     void (async () => {
@@ -141,6 +161,18 @@ function Properties() {
     applySearchParams(nextPage)
   }
 
+  const onFavoriteChanged = (propertyId: number, isFavorited: boolean) => {
+    setFavoriteIds((prev) => {
+      const next = new Set(prev)
+      if (isFavorited) {
+        next.add(propertyId)
+      } else {
+        next.delete(propertyId)
+      }
+      return next
+    })
+  }
+
   return (
     <section>
       <PageTitle title="Properties" />
@@ -155,7 +187,12 @@ function Properties() {
           <>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  isFavorited={favoriteIds.has(property.id)}
+                  onFavoriteChanged={(isFavorited) => onFavoriteChanged(property.id, isFavorited)}
+                />
               ))}
             </div>
             <div className="flex items-center justify-center gap-2">

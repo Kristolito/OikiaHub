@@ -10,6 +10,8 @@ using RealEstate.Infrastructure.Persistence;
 using RealEstate.Infrastructure.Services;
 using FluentValidation;
 using RealEstate.Application.Validators.Properties;
+using RealEstate.Application.Validators.Favorites;
+using RealEstate.Application.DTOs.Favorites;
 
 namespace RealEstate.Infrastructure;
 
@@ -30,9 +32,11 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<ILookupService, LookupService>();
+        services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
         services.AddScoped<IValidator<UpdatePropertyRequest>, UpdatePropertyRequestValidator>();
         services.AddScoped<IValidator<GetPropertiesRequest>, GetPropertiesRequestValidator>();
+        services.AddScoped<IValidator<AddFavoriteRequest>, AddFavoriteRequestValidator>();
 
         return services;
     }
