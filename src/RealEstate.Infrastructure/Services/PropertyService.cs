@@ -5,6 +5,7 @@ using RealEstate.Application.DTOs.Properties;
 using RealEstate.Application.Exceptions;
 using RealEstate.Application.Interfaces;
 using RealEstate.Domain.Entities;
+using RealEstate.Domain.Enums;
 using RealEstate.Infrastructure.Persistence;
 
 namespace RealEstate.Infrastructure.Services;
@@ -12,33 +13,111 @@ namespace RealEstate.Infrastructure.Services;
 public class PropertyService : IPropertyService
 {
     private readonly RealEstateDbContext _dbContext;
+    private readonly IValidator<GetPropertiesRequest> _getValidator;
     private readonly IValidator<CreatePropertyRequest> _createValidator;
     private readonly IValidator<UpdatePropertyRequest> _updateValidator;
 
     public PropertyService(
         RealEstateDbContext dbContext,
+        IValidator<GetPropertiesRequest> getValidator,
         IValidator<CreatePropertyRequest> createValidator,
         IValidator<UpdatePropertyRequest> updateValidator)
     {
         _dbContext = dbContext;
+        _getValidator = getValidator;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
     }
 
     public async Task<PagedResponse<PropertyListItemResponse>> GetPropertiesAsync(GetPropertiesRequest request, CancellationToken cancellationToken = default)
     {
-        var page = request.Page < 1 ? 1 : request.Page;
-        var pageSize = request.PageSize < 1 ? 10 : Math.Min(request.PageSize, 100);
-        var sortBy = request.SortBy?.Trim().ToLowerInvariant() ?? "newest";
+        await _getValidator.ValidateAndThrowAsync(request, cancellationToken);
+        await ValidateFilterConsistencyAsync(request, cancellationToken);
 
-        IQueryable<Property> query = _dbContext.Properties
-            .AsNoTracking()
-            .Include(x => x.City)
-            .Include(x => x.Area)
-            .Include(x => x.PropertyImages);
+        var page = request.Page;
+        var pageSize = request.PageSize;
+        var sortBy = (request.SortBy ?? "newest").Trim().ToLowerInvariant();
+
+        IQueryable<Property> query = _dbContext.Properties.AsNoTracking()
+            .Where(x => x.Status == PropertyStatus.Published);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            var term = request.SearchTerm.Trim();
+            query = query.Where(x =>
+                x.Title.Contains(term) ||
+                x.Description.Contains(term) ||
+                x.Address.Contains(term));
+        }
+
+        if (request.CityId.HasValue)
+        {
+            query = query.Where(x => x.CityId == request.CityId.Value);
+        }
+
+        if (request.AreaId.HasValue)
+        {
+            query = query.Where(x => x.AreaId == request.AreaId.Value);
+        }
+
+        if (request.ListingType.HasValue)
+        {
+            query = query.Where(x => x.ListingType == request.ListingType.Value);
+        }
+
+        if (request.PropertyType.HasValue)
+        {
+            query = query.Where(x => x.PropertyType == request.PropertyType.Value);
+        }
+
+        if (request.MinPrice.HasValue)
+        {
+            query = query.Where(x => x.Price >= request.MinPrice.Value);
+        }
+
+        if (request.MaxPrice.HasValue)
+        {
+            query = query.Where(x => x.Price <= request.MaxPrice.Value);
+        }
+
+        if (request.MinBedrooms.HasValue)
+        {
+            query = query.Where(x => x.Bedrooms >= request.MinBedrooms.Value);
+        }
+
+        if (request.MaxBedrooms.HasValue)
+        {
+            query = query.Where(x => x.Bedrooms <= request.MaxBedrooms.Value);
+        }
+
+        if (request.MinBathrooms.HasValue)
+        {
+            query = query.Where(x => x.Bathrooms >= request.MinBathrooms.Value);
+        }
+
+        if (request.MaxBathrooms.HasValue)
+        {
+            query = query.Where(x => x.Bathrooms <= request.MaxBathrooms.Value);
+        }
+
+        if (request.MinSquareMeters.HasValue)
+        {
+            query = query.Where(x => x.SquareMeters >= request.MinSquareMeters.Value);
+        }
+
+        if (request.MaxSquareMeters.HasValue)
+        {
+            query = query.Where(x => x.SquareMeters <= request.MaxSquareMeters.Value);
+        }
+
+        if (request.Status.HasValue)
+        {
+            query = query.Where(x => x.Status == request.Status.Value);
+        }
 
         query = sortBy switch
         {
+            "oldest" => query.OrderBy(x => x.CreatedAt),
             "priceasc" => query.OrderBy(x => x.Price),
             "pricedesc" => query.OrderByDescending(x => x.Price),
             _ => query.OrderByDescending(x => x.CreatedAt)
@@ -60,7 +139,6 @@ public class PropertyService : IPropertyService
                 SquareMeters = x.SquareMeters,
                 ListingType = x.ListingType,
                 PropertyType = x.PropertyType,
-                Status = x.Status,
                 PrimaryImageUrl = x.PropertyImages
                     .OrderByDescending(i => i.IsPrimary)
                     .ThenBy(i => i.SortOrder)
@@ -75,7 +153,8 @@ public class PropertyService : IPropertyService
             Items = items,
             Page = page,
             PageSize = pageSize,
-            TotalCount = total
+            TotalCount = total,
+            TotalPages = (int)Math.Ceiling(total / (double)pageSize)
         };
     }
 
@@ -83,6 +162,7 @@ public class PropertyService : IPropertyService
     {
         var property = await GetPropertyQuery()
             .AsNoTracking()
+            .Where(x => x.Status == PropertyStatus.Published)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return property is null ? null : MapDetails(property);
@@ -299,6 +379,28 @@ public class PropertyService : IPropertyService
         if (existingAmenityIds.Count != distinctAmenityIds.Count)
         {
             throw new BadRequestException("One or more amenity IDs are invalid.");
+        }
+    }
+
+    private async Task ValidateFilterConsistencyAsync(GetPropertiesRequest request, CancellationToken cancellationToken)
+    {
+        if (request.CityId.HasValue && request.AreaId.HasValue)
+        {
+            var area = await _dbContext.Areas
+                .AsNoTracking()
+                .Where(x => x.Id == request.AreaId.Value)
+                .Select(x => new { x.Id, x.CityId })
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (area is null)
+            {
+                throw new BadRequestException("Selected area is invalid.");
+            }
+
+            if (area.CityId != request.CityId.Value)
+            {
+                throw new BadRequestException("Selected area does not belong to selected city.");
+            }
         }
     }
 

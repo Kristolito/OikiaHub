@@ -11,7 +11,6 @@ export type PropertyListItemResponse = {
   squareMeters: number
   listingType: number
   propertyType: number
-  status: number
   primaryImageUrl?: string | null
   createdAt: string
 }
@@ -21,6 +20,7 @@ export type PagedResponse<T> = {
   page: number
   pageSize: number
   totalCount: number
+  totalPages: number
 }
 
 export type PropertyDetailsResponse = {
@@ -45,6 +45,16 @@ export type PropertyDetailsResponse = {
   floor?: number | null
   status: number
   agentProfileId: number
+  agent: {
+    id: number
+    userId: number
+    firstName: string
+    lastName: string
+    email: string
+    phoneNumber: string
+    agencyName: string
+    profileImageUrl?: string | null
+  }
   images: { id: number; imageUrl: string; isPrimary: boolean; sortOrder: number }[]
   amenities: { id: number; name: string }[]
 }
@@ -73,9 +83,50 @@ export type SavePropertyRequest = {
   agentProfileId?: number | null
 }
 
-export async function getProperties(page = 1, pageSize = 20, sortBy = 'newest') {
+export type GetPropertiesRequest = {
+  searchTerm?: string
+  cityId?: number
+  areaId?: number
+  listingType?: number
+  propertyType?: number
+  minPrice?: number
+  maxPrice?: number
+  minBedrooms?: number
+  maxBedrooms?: number
+  minBathrooms?: number
+  maxBathrooms?: number
+  minSquareMeters?: number
+  maxSquareMeters?: number
+  sortBy?: 'newest' | 'oldest' | 'priceAsc' | 'priceDesc'
+  page?: number
+  pageSize?: number
+}
+
+export type LookupItem = {
+  id: number
+  name: string
+}
+
+export async function getProperties(query: GetPropertiesRequest = {}) {
   const response = await api.get<PagedResponse<PropertyListItemResponse>>('/properties', {
-    params: { page, pageSize, sortBy },
+    params: {
+      searchTerm: query.searchTerm,
+      cityId: query.cityId,
+      areaId: query.areaId,
+      listingType: query.listingType,
+      propertyType: query.propertyType,
+      minPrice: query.minPrice,
+      maxPrice: query.maxPrice,
+      minBedrooms: query.minBedrooms,
+      maxBedrooms: query.maxBedrooms,
+      minBathrooms: query.minBathrooms,
+      maxBathrooms: query.maxBathrooms,
+      minSquareMeters: query.minSquareMeters,
+      maxSquareMeters: query.maxSquareMeters,
+      sortBy: query.sortBy ?? 'newest',
+      page: query.page ?? 1,
+      pageSize: query.pageSize ?? 12,
+    },
   })
   return response.data
 }
@@ -97,4 +148,21 @@ export async function updateProperty(id: number, payload: SavePropertyRequest) {
 
 export async function deleteProperty(id: number) {
   await api.delete(`/properties/${id}`)
+}
+
+export async function getCities() {
+  const response = await api.get<LookupItem[]>('/lookups/cities')
+  return response.data
+}
+
+export async function getAreas(cityId?: number) {
+  const response = await api.get<LookupItem[]>('/lookups/areas', {
+    params: cityId ? { cityId } : {},
+  })
+  return response.data
+}
+
+export async function getAmenities() {
+  const response = await api.get<LookupItem[]>('/lookups/amenities')
+  return response.data
 }

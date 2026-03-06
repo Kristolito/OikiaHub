@@ -29,8 +29,10 @@ public static class DependencyInjection
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPropertyService, PropertyService>();
+        services.AddScoped<ILookupService, LookupService>();
         services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
         services.AddScoped<IValidator<UpdatePropertyRequest>, UpdatePropertyRequestValidator>();
+        services.AddScoped<IValidator<GetPropertiesRequest>, GetPropertiesRequestValidator>();
 
         return services;
     }

@@ -24,8 +24,19 @@ public class PropertiesController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<PagedResponse<PropertyListItemResponse>>> GetAll([FromQuery] GetPropertiesRequest request, CancellationToken cancellationToken)
     {
-        var response = await _propertyService.GetPropertiesAsync(request, cancellationToken);
-        return Ok(response);
+        try
+        {
+            var response = await _propertyService.GetPropertiesAsync(request, cancellationToken);
+            return Ok(response);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ValidationProblemDetails(ToValidationProblem(ex)));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpGet("{id:int}")]

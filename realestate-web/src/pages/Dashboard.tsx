@@ -74,7 +74,7 @@ function Dashboard() {
     setLoading(true)
     setError('')
     try {
-      const response = await getProperties(1, 20, 'newest')
+      const response = await getProperties({ page: 1, pageSize: 20, sortBy: 'newest' })
       setItems(response.items)
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Failed to load properties.')

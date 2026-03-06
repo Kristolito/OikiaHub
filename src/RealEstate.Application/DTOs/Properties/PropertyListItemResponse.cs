@@ -14,7 +14,6 @@ public class PropertyListItemResponse
     public decimal SquareMeters { get; set; }
     public ListingType ListingType { get; set; }
     public PropertyType PropertyType { get; set; }
-    public PropertyStatus Status { get; set; }
     public string? PrimaryImageUrl { get; set; }
     public DateTime CreatedAt { get; set; }
 }
