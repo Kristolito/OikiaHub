@@ -9,6 +9,12 @@ import Dashboard from './pages/Dashboard'
 import Favorites from './pages/Favorites'
 import MyInquiries from './pages/MyInquiries'
 import DashboardInquiries from './pages/DashboardInquiries'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminUsers from './pages/AdminUsers'
+import AdminUserDetails from './pages/AdminUserDetails'
+import AdminProperties from './pages/AdminProperties'
+import AdminPropertyDetails from './pages/AdminPropertyDetails'
+import RequireRole from './components/RequireRole'
 
 function App() {
   return (
@@ -24,6 +30,13 @@ function App() {
           <Route path="/dashboard/inquiries" element={<DashboardInquiries />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/my-inquiries" element={<MyInquiries />} />
+          <Route element={<RequireRole roles={['Admin']} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/users/:id" element={<AdminUserDetails />} />
+            <Route path="/admin/properties" element={<AdminProperties />} />
+            <Route path="/admin/properties/:id" element={<AdminPropertyDetails />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

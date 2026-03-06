@@ -16,6 +16,8 @@ using RealEstate.Application.DTOs.Inquiries;
 using RealEstate.Application.Validators.Inquiries;
 using RealEstate.Application.DTOs.PropertyImages;
 using RealEstate.Application.Validators.PropertyImages;
+using RealEstate.Application.DTOs.Admin;
+using RealEstate.Application.Validators.Admin;
 
 namespace RealEstate.Infrastructure;
 
@@ -38,6 +40,7 @@ public static class DependencyInjection
         services.AddScoped<ILookupService, LookupService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IInquiryService, InquiryService>();
+        services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<IPropertyImageService, PropertyImageService>();
         services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
@@ -47,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<CreateInquiryRequest>, CreateInquiryRequestValidator>();
         services.AddScoped<IValidator<UpdateInquiryStatusRequest>, UpdateInquiryStatusRequestValidator>();
         services.AddScoped<IValidator<ReorderPropertyImagesRequest>, ReorderPropertyImagesRequestValidator>();
+        services.AddScoped<IValidator<UpdatePropertyStatusRequest>, UpdatePropertyStatusRequestValidator>();
 
         return services;
     }

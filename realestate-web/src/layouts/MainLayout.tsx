@@ -1,17 +1,32 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import useAuthState from '../hooks/useAuthState'
 
-const links = [
+const publicLinks = [
   { to: '/', label: 'Home' },
   { to: '/properties', label: 'Properties' },
   { to: '/favorites', label: 'Favorites' },
   { to: '/my-inquiries', label: 'My Inquiries' },
   { to: '/dashboard/inquiries', label: 'Dashboard Inquiries' },
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/login', label: 'Login' },
-  { to: '/register', label: 'Register' },
 ]
 
 function MainLayout() {
+  const { user } = useAuthState()
+  const isAdmin = user?.role === 'Admin'
+
+  const links = [
+    ...publicLinks,
+    ...(isAdmin
+      ? [
+          { to: '/admin', label: 'Admin' },
+          { to: '/admin/users', label: 'Admin Users' },
+          { to: '/admin/properties', label: 'Admin Properties' },
+        ]
+      : []),
+    { to: '/login', label: 'Login' },
+    { to: '/register', label: 'Register' },
+  ]
+
   return (
     <div className="min-h-screen">
       <header className="border-b border-slate-200 bg-white">
