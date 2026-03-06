@@ -5,6 +5,7 @@ import PageTitle from '../components/PageTitle'
 import useAuthState from '../hooks/useAuthState'
 import { checkFavorite } from '../services/favoritesService'
 import { createInquiry } from '../services/inquiriesService'
+import { resolveImageUrl } from '../services/api'
 import { getProperty, type PropertyDetailsResponse } from '../services/propertyService'
 
 function PropertyDetails() {
@@ -81,7 +82,7 @@ function PropertyDetails() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {property.images.length > 0 ? (
               property.images.map((image) => (
-                <img key={image.id} src={image.imageUrl} alt={property.title} className="h-44 w-full rounded-lg object-cover" />
+                <img key={image.id} src={resolveImageUrl(image.imageUrl)} alt={property.title} className="h-44 w-full rounded-lg object-cover" />
               ))
             ) : (
               <div className="rounded-lg border border-dashed p-6 text-slate-500">No images available.</div>

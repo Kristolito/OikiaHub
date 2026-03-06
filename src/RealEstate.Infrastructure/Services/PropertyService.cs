@@ -258,9 +258,12 @@ public class PropertyService : IPropertyService
         property.PropertyAmenities.Clear();
         ApplyAmenities(property, request.AmenityIds);
 
-        _dbContext.PropertyImages.RemoveRange(property.PropertyImages);
-        property.PropertyImages.Clear();
-        ApplyImages(property, request.ImageUrls, request.PrimaryImageUrl);
+        if (request.ImageUrls.Count > 0 || !string.IsNullOrWhiteSpace(request.PrimaryImageUrl))
+        {
+            _dbContext.PropertyImages.RemoveRange(property.PropertyImages);
+            property.PropertyImages.Clear();
+            ApplyImages(property, request.ImageUrls, request.PrimaryImageUrl);
+        }
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         return MapDetails(property);

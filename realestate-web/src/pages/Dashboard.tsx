@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import PageTitle from '../components/PageTitle'
 import useAuthState from '../hooks/useAuthState'
+import { resolveImageUrl } from '../services/api'
+import {
+  deletePropertyImage,
+  getPropertyImages,
+  reorderPropertyImages,
+  setPrimaryPropertyImage,
+  uploadPropertyImages,
+  type PropertyImageItemResponse,
+} from '../services/propertyImagesService'
 import {
   createProperty,
   deleteProperty,
@@ -67,6 +76,11 @@ function Dashboard() {
   const [error, setError] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<PropertyFormState>(defaultForm)
+  const [images, setImages] = useState<PropertyImageItemResponse[]>([])
+  const [imageLoading, setImageLoading] = useState(false)
+  const [imageUploading, setImageUploading] = useState(false)
+  const [imageError, setImageError] = useState('')
+  const [imageSuccess, setImageSuccess] = useState('')
 
   const canManage = useMemo(() => user?.role === 'Admin' || user?.role === 'Agent', [user?.role])
 
@@ -132,6 +146,9 @@ function Dashboard() {
   const resetForm = () => {
     setForm(defaultForm)
     setEditingId(null)
+    setImages([])
+    setImageError('')
+    setImageSuccess('')
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -167,6 +184,8 @@ function Dashboard() {
     try {
       const details = await getProperty(id)
       setEditingId(id)
+      setImageLoading(true)
+      setImageError('')
       setForm({
         title: details.title,
         description: details.description,
@@ -190,8 +209,12 @@ function Dashboard() {
         primaryImageUrl: details.images.find((i) => i.isPrimary)?.imageUrl ?? '',
         agentProfileId: String(details.agentProfileId),
       })
+      const propertyImages = await getPropertyImages(id)
+      setImages(propertyImages)
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Failed to load property details.')
+    } finally {
+      setImageLoading(false)
     }
   }
 
@@ -205,6 +228,96 @@ function Dashboard() {
       }
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Failed to delete property.')
+    }
+  }
+
+  const refreshImages = async (propertyId: number) => {
+    setImageLoading(true)
+    try {
+      const data = await getPropertyImages(propertyId)
+      setImages(data)
+    } finally {
+      setImageLoading(false)
+    }
+  }
+
+  const handleUploadImages = async (files: FileList | null) => {
+    if (!editingId || !files || files.length === 0) {
+      return
+    }
+
+    setImageUploading(true)
+    setImageError('')
+    setImageSuccess('')
+    try {
+      const data = await uploadPropertyImages(editingId, files)
+      setImages(data)
+      setImageSuccess('Images uploaded successfully.')
+    } catch (err: any) {
+      setImageError(err?.response?.data?.message ?? 'Failed to upload images.')
+    } finally {
+      setImageUploading(false)
+    }
+  }
+
+  const handleDeleteImage = async (imageId: number) => {
+    if (!editingId) {
+      return
+    }
+
+    setImageError('')
+    setImageSuccess('')
+    try {
+      await deletePropertyImage(editingId, imageId)
+      await refreshImages(editingId)
+      setImageSuccess('Image deleted.')
+    } catch (err: any) {
+      setImageError(err?.response?.data?.message ?? 'Failed to delete image.')
+    }
+  }
+
+  const handleSetPrimaryImage = async (imageId: number) => {
+    if (!editingId) {
+      return
+    }
+
+    setImageError('')
+    setImageSuccess('')
+    try {
+      const data = await setPrimaryPropertyImage(editingId, imageId)
+      setImages(data)
+      setImageSuccess('Primary image updated.')
+    } catch (err: any) {
+      setImageError(err?.response?.data?.message ?? 'Failed to set primary image.')
+    }
+  }
+
+  const moveImage = async (imageId: number, direction: 'up' | 'down') => {
+    if (!editingId || images.length < 2) {
+      return
+    }
+
+    const sorted = [...images].sort((a, b) => a.sortOrder - b.sortOrder)
+    const index = sorted.findIndex((x) => x.id === imageId)
+    if (index < 0) {
+      return
+    }
+
+    const swapIndex = direction === 'up' ? index - 1 : index + 1
+    if (swapIndex < 0 || swapIndex >= sorted.length) {
+      return
+    }
+
+    const next = [...sorted]
+    const temp = next[index]
+    next[index] = next[swapIndex]
+    next[swapIndex] = temp
+
+    try {
+      const data = await reorderPropertyImages(editingId, next.map((x) => x.id))
+      setImages(data)
+    } catch (err: any) {
+      setImageError(err?.response?.data?.message ?? 'Failed to reorder images.')
     }
   }
 
@@ -255,6 +368,69 @@ function Dashboard() {
                 )}
               </div>
             </form>
+
+            {editingId && (
+              <div className="mt-6 rounded-lg bg-white p-4 shadow-sm">
+                <h3 className="text-lg font-semibold">Property Images</h3>
+                <div className="mt-3 space-y-3">
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    multiple
+                    onChange={(e) => void handleUploadImages(e.target.files)}
+                    disabled={imageUploading}
+                    className="w-full rounded border px-3 py-2"
+                  />
+                  {imageUploading && <p className="text-sm text-slate-600">Uploading images...</p>}
+                  {imageLoading && <p className="text-sm text-slate-600">Loading images...</p>}
+                  {imageError && <p className="text-sm text-red-600">{imageError}</p>}
+                  {imageSuccess && <p className="text-sm text-green-700">{imageSuccess}</p>}
+
+                  {!imageLoading && images.length === 0 && <p className="text-sm text-slate-600">No images uploaded yet.</p>}
+
+                  {!imageLoading && images.length > 0 && (
+                    <div className="space-y-3">
+                      {[...images]
+                        .sort((a, b) => a.sortOrder - b.sortOrder)
+                        .map((image, idx, arr) => (
+                          <div key={image.id} className="flex flex-wrap items-center gap-3 rounded border p-2">
+                            <img src={resolveImageUrl(image.imageUrl)} alt="Property" className="h-20 w-28 rounded object-cover" />
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-xs text-slate-600">{image.isPrimary ? 'Primary' : `Order ${image.sortOrder + 1}`}</span>
+                              <button type="button" className="rounded border px-2 py-1 text-xs" onClick={() => void handleSetPrimaryImage(image.id)}>
+                                Set Primary
+                              </button>
+                              <button
+                                type="button"
+                                className="rounded border px-2 py-1 text-xs"
+                                disabled={idx === 0}
+                                onClick={() => void moveImage(image.id, 'up')}
+                              >
+                                Up
+                              </button>
+                              <button
+                                type="button"
+                                className="rounded border px-2 py-1 text-xs"
+                                disabled={idx === arr.length - 1}
+                                onClick={() => void moveImage(image.id, 'down')}
+                              >
+                                Down
+                              </button>
+                              <button
+                                type="button"
+                                className="rounded border border-red-300 px-2 py-1 text-xs text-red-700"
+                                onClick={() => void handleDeleteImage(image.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

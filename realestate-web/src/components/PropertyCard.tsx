@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { PropertyListItemResponse } from '../services/propertyService'
 import FavoriteButton from './FavoriteButton'
+import { resolveImageUrl } from '../services/api'
 
 type PropertyCardProps = {
   property: PropertyListItemResponse
@@ -13,7 +14,7 @@ function PropertyCard({ property, isFavorited = false, onFavoriteChanged }: Prop
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="aspect-[16/10] bg-slate-100">
         {property.primaryImageUrl ? (
-          <img src={property.primaryImageUrl} alt={property.title} className="h-full w-full object-cover" />
+          <img src={resolveImageUrl(property.primaryImageUrl)} alt={property.title} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-500">No image</div>
         )}
