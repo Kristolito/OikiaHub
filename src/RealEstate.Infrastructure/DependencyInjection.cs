@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstate.Application.Interfaces;
+using RealEstate.Application.DTOs.Properties;
 using RealEstate.Domain.Entities;
 using RealEstate.Infrastructure.Auth;
 using RealEstate.Infrastructure.Persistence;
 using RealEstate.Infrastructure.Services;
+using FluentValidation;
+using RealEstate.Application.Validators.Properties;
 
 namespace RealEstate.Infrastructure;
 
@@ -25,6 +28,9 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IPropertyService, PropertyService>();
+        services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
+        services.AddScoped<IValidator<UpdatePropertyRequest>, UpdatePropertyRequestValidator>();
 
         return services;
     }
