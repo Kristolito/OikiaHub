@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Favorites from './pages/Favorites'
+import MyInquiries from './pages/MyInquiries'
+import DashboardInquiries from './pages/DashboardInquiries'
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/inquiries" element={<DashboardInquiries />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/my-inquiries" element={<MyInquiries />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

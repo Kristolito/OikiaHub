@@ -1,18 +1,34 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import FavoriteButton from '../components/FavoriteButton'
 import PageTitle from '../components/PageTitle'
 import useAuthState from '../hooks/useAuthState'
 import { checkFavorite } from '../services/favoritesService'
+import { createInquiry } from '../services/inquiriesService'
 import { getProperty, type PropertyDetailsResponse } from '../services/propertyService'
 
 function PropertyDetails() {
   const { id } = useParams()
-  const { isAuthenticated } = useAuthState()
+  const navigate = useNavigate()
+  const { isAuthenticated, user } = useAuthState()
   const [property, setProperty] = useState<PropertyDetailsResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isFavorited, setIsFavorited] = useState(false)
+  const [inquiryLoading, setInquiryLoading] = useState(false)
+  const [inquirySuccess, setInquirySuccess] = useState('')
+  const [inquiryError, setInquiryError] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    if (user) {
+      setFullName(`${user.firstName} ${user.lastName}`.trim())
+      setEmail(user.email)
+    }
+  }, [user])
 
   useEffect(() => {
     const propertyId = Number(id)
@@ -104,6 +120,60 @@ function PropertyDetails() {
             <p className="text-slate-600">{property.agent.email}</p>
             <p className="text-slate-600">{property.agent.phoneNumber}</p>
             <p className="text-slate-600">{property.agent.agencyName}</p>
+          </div>
+
+          <div className="rounded-lg bg-white p-4 shadow-sm">
+            <h3 className="text-lg font-semibold">Contact Agent</h3>
+            <form
+              className="mt-3 space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault()
+                if (!isAuthenticated) {
+                  navigate('/login')
+                  return
+                }
+                if (!property) {
+                  return
+                }
+
+                void (async () => {
+                  setInquiryLoading(true)
+                  setInquiryError('')
+                  setInquirySuccess('')
+                  try {
+                    await createInquiry({
+                      propertyId: property.id,
+                      fullName,
+                      email,
+                      phoneNumber,
+                      message,
+                    })
+                    setMessage('')
+                    setInquirySuccess('Inquiry submitted successfully.')
+                  } catch (err: any) {
+                    const validationErrors = err?.response?.data?.errors
+                    if (validationErrors) {
+                      const first = Object.values(validationErrors)[0] as string[] | undefined
+                      setInquiryError(first?.[0] ?? 'Failed to submit inquiry.')
+                    } else {
+                      setInquiryError(err?.response?.data?.message ?? 'Failed to submit inquiry.')
+                    }
+                  } finally {
+                    setInquiryLoading(false)
+                  }
+                })()
+              }}
+            >
+              <input className="w-full rounded border px-3 py-2" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              <input className="w-full rounded border px-3 py-2" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input className="w-full rounded border px-3 py-2" placeholder="Phone Number (optional)" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+              <textarea className="w-full rounded border px-3 py-2" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
+              {inquiryError && <p className="text-sm text-red-600">{inquiryError}</p>}
+              {inquirySuccess && <p className="text-sm text-green-700">{inquirySuccess}</p>}
+              <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-60" disabled={inquiryLoading}>
+                {inquiryLoading ? 'Sending...' : 'Send Inquiry'}
+              </button>
+            </form>
           </div>
         </div>
       )}

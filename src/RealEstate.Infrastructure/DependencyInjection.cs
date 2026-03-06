@@ -12,6 +12,8 @@ using FluentValidation;
 using RealEstate.Application.Validators.Properties;
 using RealEstate.Application.Validators.Favorites;
 using RealEstate.Application.DTOs.Favorites;
+using RealEstate.Application.DTOs.Inquiries;
+using RealEstate.Application.Validators.Inquiries;
 
 namespace RealEstate.Infrastructure;
 
@@ -33,10 +35,13 @@ public static class DependencyInjection
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<ILookupService, LookupService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
+        services.AddScoped<IInquiryService, InquiryService>();
         services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
         services.AddScoped<IValidator<UpdatePropertyRequest>, UpdatePropertyRequestValidator>();
         services.AddScoped<IValidator<GetPropertiesRequest>, GetPropertiesRequestValidator>();
         services.AddScoped<IValidator<AddFavoriteRequest>, AddFavoriteRequestValidator>();
+        services.AddScoped<IValidator<CreateInquiryRequest>, CreateInquiryRequestValidator>();
+        services.AddScoped<IValidator<UpdateInquiryStatusRequest>, UpdateInquiryStatusRequestValidator>();
 
         return services;
     }

@@ -1,19 +1,16 @@
 using RealEstate.Domain.Enums;
 
-namespace RealEstate.Domain.Entities;
+namespace RealEstate.Application.DTOs.Inquiries;
 
-public class Inquiry
+public class InquiryListItemResponse
 {
     public int Id { get; set; }
     public int PropertyId { get; set; }
-    public int UserId { get; set; }
+    public string PropertyTitle { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public InquiryStatus Status { get; set; }
+    public string MessagePreview { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-
-    public Property Property { get; set; } = null!;
-    public User User { get; set; } = null!;
+    public InquiryStatus Status { get; set; }
 }

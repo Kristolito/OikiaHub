@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RealEstate.Domain.Entities;
+using RealEstate.Domain.Enums;
 
 namespace RealEstate.Infrastructure.Persistence.Configurations;
 
@@ -27,9 +28,16 @@ public class InquiryConfiguration : IEntityTypeConfiguration<Inquiry>
             .HasMaxLength(2000)
             .IsRequired();
 
+        builder.Property(x => x.Status)
+            .HasDefaultValue(InquiryStatus.New)
+            .IsRequired();
+
         builder.Property(x => x.CreatedAt)
             .HasDefaultValueSql("UTC_TIMESTAMP()")
             .IsRequired();
+
+        builder.HasIndex(x => x.CreatedAt);
+        builder.HasIndex(x => x.Status);
 
         builder.HasOne(x => x.Property)
             .WithMany(x => x.Inquiries)

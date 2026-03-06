@@ -4,6 +4,8 @@ const links = [
   { to: '/', label: 'Home' },
   { to: '/properties', label: 'Properties' },
   { to: '/favorites', label: 'Favorites' },
+  { to: '/my-inquiries', label: 'My Inquiries' },
+  { to: '/dashboard/inquiries', label: 'Dashboard Inquiries' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/login', label: 'Login' },
   { to: '/register', label: 'Register' },
