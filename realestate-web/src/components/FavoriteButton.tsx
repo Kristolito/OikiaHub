@@ -42,9 +42,9 @@ function FavoriteButton({ propertyId, isFavorited, onChanged }: FavoriteButtonPr
       type="button"
       onClick={() => void handleClick()}
       disabled={loading}
-      className="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 disabled:opacity-60"
+      className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:bg-slate-800 disabled:opacity-60"
     >
-      {loading ? 'Saving...' : active ? 'Unsave' : 'Save'}
+      {loading ? 'Saving...' : active ? 'Saved' : 'Save'}
     </button>
   )
 }

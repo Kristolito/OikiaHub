@@ -85,9 +85,9 @@ function DashboardInquiries() {
       <PageTitle title="Dashboard Inquiries" />
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div>
-          {loading && <p className="text-slate-600">Loading inquiries...</p>}
-          {error && <p className="text-red-600">{error}</p>}
-          {!loading && !error && items.length === 0 && <p className="text-slate-600">No inquiries found.</p>}
+          {loading && <p className="text-slate-400">Loading inquiries...</p>}
+          {error && <p className="text-red-400">{error}</p>}
+          {!loading && !error && items.length === 0 && <p className="text-slate-400">No inquiries found.</p>}
           {!loading && !error && items.length > 0 && (
             <div className="space-y-3">
               {items.map((inquiry) => (
@@ -95,41 +95,41 @@ function DashboardInquiries() {
                   key={inquiry.id}
                   type="button"
                   onClick={() => void openDetails(inquiry.id)}
-                  className="w-full rounded-lg bg-white p-4 text-left shadow-sm"
+                  className="w-full rounded-lg bg-slate-900 p-4 text-left shadow-sm"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-semibold">{inquiry.propertyTitle}</p>
-                    <span className="rounded bg-slate-100 px-2 py-1 text-xs">{inquiryStatusLabel(inquiry.status)}</span>
+                    <p className="font-semibold text-slate-100">{inquiry.propertyTitle}</p>
+                    <span className="rounded bg-black px-2 py-1 text-xs text-slate-200">{inquiryStatusLabel(inquiry.status)}</span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 text-sm text-slate-300">
                     {inquiry.fullName} - {inquiry.email}
                   </p>
-                  <p className="mt-2 text-sm text-slate-700">{inquiry.messagePreview}</p>
+                  <p className="mt-2 text-sm text-slate-200">{inquiry.messagePreview}</p>
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="rounded-lg bg-white p-4 shadow-sm">
-          {!selected && <p className="text-slate-600">Select an inquiry to view details.</p>}
+        <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
+          {!selected && <p className="text-slate-400">Select an inquiry to view details.</p>}
           {selected && (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold">{selected.propertyTitle}</h3>
-              <p className="text-sm text-slate-600">
+              <h3 className="text-lg font-semibold text-slate-100">{selected.propertyTitle}</h3>
+              <p className="text-sm text-slate-300">
                 {selected.propertyCity}, {selected.propertyArea} | ${selected.propertyPrice.toLocaleString()}
               </p>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-300">
                 From: {selected.fullName} ({selected.email})
               </p>
-              <p className="text-sm text-slate-600">Phone: {selected.phoneNumber || '-'}</p>
-              <p className="rounded bg-slate-50 p-3 text-sm text-slate-800">{selected.message}</p>
-              <label className="text-sm font-medium">Status</label>
+              <p className="text-sm text-slate-300">Phone: {selected.phoneNumber || '-'}</p>
+              <p className="rounded bg-black p-3 text-sm text-slate-200">{selected.message}</p>
+              <label className="text-sm font-medium text-slate-200">Status</label>
               <select
                 value={selected.status}
                 onChange={(e) => void onStatusChange(Number(e.target.value) as InquiryStatus)}
                 disabled={updating}
-                className="w-full rounded border px-3 py-2"
+                className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100"
               >
                 <option value={1}>New</option>
                 <option value={2}>Read</option>
@@ -145,3 +145,4 @@ function DashboardInquiries() {
 }
 
 export default DashboardInquiries
+

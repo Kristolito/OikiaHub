@@ -98,7 +98,7 @@ function AdminPropertyDetails() {
       {success && <p className="mt-3 text-green-700">{success}</p>}
       {!loading && !error && property && (
         <div className="mt-6 space-y-4">
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h2 className="text-xl font-semibold">{property.title}</h2>
             <p className="text-slate-600">
               {property.city}, {property.area}
@@ -111,7 +111,7 @@ function AdminPropertyDetails() {
             </p>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h3 className="text-lg font-semibold">Moderation Actions</h3>
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <select className="rounded border px-2 py-1 text-sm" value={status} onChange={(e) => setStatus(Number(e.target.value))}>
@@ -130,7 +130,7 @@ function AdminPropertyDetails() {
             </div>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h3 className="text-lg font-semibold">Images</h3>
             {property.images.length > 0 ? (
               <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -143,7 +143,7 @@ function AdminPropertyDetails() {
             )}
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h3 className="text-lg font-semibold">Amenities</h3>
             {property.amenities.length > 0 ? (
               <ul className="mt-2 flex flex-wrap gap-2">
@@ -164,3 +164,4 @@ function AdminPropertyDetails() {
 }
 
 export default AdminPropertyDetails
+

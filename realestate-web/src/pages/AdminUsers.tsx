@@ -25,13 +25,13 @@ function AdminUsers() {
   return (
     <section>
       <PageTitle title="Admin Users" />
-      {loading && <p className="mt-3 text-slate-600">Loading users...</p>}
-      {error && <p className="mt-3 text-red-600">{error}</p>}
-      {!loading && !error && users.length === 0 && <p className="mt-3 text-slate-600">No users found.</p>}
+      {loading && <p className="mt-3 text-slate-400">Loading users...</p>}
+      {error && <p className="mt-3 text-red-400">{error}</p>}
+      {!loading && !error && users.length === 0 && <p className="mt-3 text-slate-400">No users found.</p>}
       {!loading && !error && users.length > 0 && (
-        <div className="mt-6 overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-left">
+        <div className="mt-6 overflow-x-auto rounded-lg border border-slate-800 bg-slate-900 shadow-sm">
+          <table className="min-w-full text-sm text-slate-100">
+            <thead className="bg-black text-left text-slate-200">
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
@@ -42,7 +42,7 @@ function AdminUsers() {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="border-t border-slate-100">
+                <tr key={user.id} className="border-t border-slate-800">
                   <td className="px-4 py-3">
                     {user.firstName} {user.lastName}
                   </td>
@@ -50,7 +50,7 @@ function AdminUsers() {
                   <td className="px-4 py-3">{user.role}</td>
                   <td className="px-4 py-3">{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
-                    <Link to={`/admin/users/${user.id}`} className="rounded border px-3 py-1 text-xs">
+                    <Link to={`/admin/users/${user.id}`} className="rounded border border-slate-700 px-3 py-1 text-xs text-slate-200">
                       Details
                     </Link>
                   </td>
@@ -65,3 +65,4 @@ function AdminUsers() {
 }
 
 export default AdminUsers
+

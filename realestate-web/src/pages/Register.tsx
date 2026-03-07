@@ -1,6 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageTitle from '../components/PageTitle'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
+import Input from '../components/ui/Input'
 import useAuthState from '../hooks/useAuthState'
 import { register } from '../services/authService'
 
@@ -48,82 +51,79 @@ function Register() {
 
   return (
     <section>
-      <PageTitle title="Register" />
-      <form onSubmit={onSubmit} className="mt-6 max-w-md space-y-4 rounded-lg bg-white p-6 shadow-sm">
+      <PageTitle title="Register" subtitle="Create an account to save homes and contact agents." />
+      <Card className="mt-6 max-w-md p-6">
+      <form onSubmit={onSubmit} className="space-y-4">
         <div>
-          <label htmlFor="firstName" className="mb-1 block text-sm font-medium">
+          <label htmlFor="firstName" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             First Name
           </label>
-          <input
+          <Input
             id="firstName"
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
             required
           />
         </div>
         <div>
-          <label htmlFor="lastName" className="mb-1 block text-sm font-medium">
+          <label htmlFor="lastName" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Last Name
           </label>
-          <input
+          <Input
             id="lastName"
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
             required
           />
         </div>
         <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Email
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
             required
           />
         </div>
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Password
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
             required
           />
         </div>
         <div>
-          <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium">
+          <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Confirm Password
           </label>
-          <input
+          <Input
             id="confirmPassword"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
             required
           />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-slate-900 px-4 py-2 text-white disabled:opacity-60"
+          className="w-full"
         >
           {loading ? 'Creating account...' : 'Create account'}
-        </button>
+        </Button>
       </form>
+      </Card>
     </section>
   )
 }

@@ -48,14 +48,14 @@ function AdminDashboard() {
   return (
     <section>
       <PageTitle title="Admin Dashboard" />
-      {loading && <p className="mt-3 text-slate-600">Loading dashboard...</p>}
-      {error && <p className="mt-3 text-red-600">{error}</p>}
+      {loading && <p className="mt-3 text-slate-400">Loading dashboard...</p>}
+      {error && <p className="mt-3 text-red-400">{error}</p>}
       {!loading && !error && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
-            <article key={card.label} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-sm text-slate-600">{card.label}</p>
-              <p className="mt-2 text-2xl font-bold text-slate-900">{card.value}</p>
+            <article key={card.label} className="rounded-lg border border-slate-800 bg-slate-900 p-4 shadow-sm">
+              <p className="text-sm text-slate-300">{card.label}</p>
+              <p className="mt-2 text-2xl font-bold text-slate-100">{card.value}</p>
             </article>
           ))}
         </div>
@@ -65,3 +65,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard
+

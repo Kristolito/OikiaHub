@@ -43,7 +43,7 @@ function MyInquiries() {
         {!loading && !error && items.length > 0 && (
           <div className="space-y-3">
             {items.map((inquiry) => (
-              <article key={inquiry.id} className="rounded-lg bg-white p-4 shadow-sm">
+              <article key={inquiry.id} className="rounded-lg bg-slate-900 p-4 shadow-sm">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-semibold">{inquiry.propertyTitle}</h3>
                   <span className="rounded bg-slate-100 px-2 py-1 text-xs">{inquiryStatusLabel(inquiry.status)}</span>
@@ -60,3 +60,4 @@ function MyInquiries() {
 }
 
 export default MyInquiries
+

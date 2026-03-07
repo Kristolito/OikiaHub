@@ -43,7 +43,7 @@ function AdminUserDetails() {
       {error && <p className="mt-3 text-red-600">{error}</p>}
       {!loading && !error && user && (
         <div className="mt-6 space-y-4">
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h2 className="text-xl font-semibold">
               {user.firstName} {user.lastName}
             </h2>
@@ -53,17 +53,17 @@ function AdminUserDetails() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
               <p className="text-sm text-slate-600">Managed Properties</p>
               <p className="mt-2 text-2xl font-bold">{user.propertyCount}</p>
             </div>
-            <div className="rounded-lg bg-white p-4 shadow-sm">
+            <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
               <p className="text-sm text-slate-600">Submitted Inquiries</p>
               <p className="mt-2 text-2xl font-bold">{user.inquiryCount}</p>
             </div>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="rounded-lg bg-slate-900 p-4 shadow-sm">
             <h3 className="text-lg font-semibold">Agent Profile</h3>
             {user.agentProfile ? (
               <div className="mt-2 space-y-1 text-slate-700">
@@ -82,3 +82,4 @@ function AdminUserDetails() {
 }
 
 export default AdminUserDetails
+

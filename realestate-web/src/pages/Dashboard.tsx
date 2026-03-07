@@ -158,6 +158,18 @@ function Dashboard() {
 
     try {
       const payload = toPayload()
+      if (!Number.isInteger(payload.cityId) || payload.cityId <= 0) {
+        setError('CityId must be a numeric id (for example: 1).')
+        return
+      }
+      if (!Number.isInteger(payload.areaId) || payload.areaId <= 0) {
+        setError('AreaId must be a numeric id (for example: 1).')
+        return
+      }
+      if (user?.role === 'Admin' && (!payload.agentProfileId || payload.agentProfileId <= 0)) {
+        setError('AgentProfileId is required for Admin and must be a numeric id.')
+        return
+      }
       if (editingId) {
         await updateProperty(editingId, payload)
       } else {
@@ -169,8 +181,10 @@ function Dashboard() {
     } catch (err: any) {
       const validationErrors = err?.response?.data?.errors
       if (validationErrors) {
-        const first = Object.values(validationErrors)[0] as string[] | undefined
-        setError(first?.[0] ?? 'Failed to save property.')
+        const messages = Object.values(validationErrors)
+          .flatMap((x) => (Array.isArray(x) ? x : [String(x)]))
+          .filter(Boolean)
+        setError(messages.length > 0 ? messages.join(' | ') : 'Failed to save property.')
       } else {
         setError(err?.response?.data?.message ?? 'Failed to save property.')
       }
@@ -324,45 +338,45 @@ function Dashboard() {
   return (
     <section>
       <PageTitle title="Dashboard" />
-      {!canManage && <p className="mt-3 text-slate-600">Property management is available for Admin and Agent users.</p>}
+      {!canManage && <p className="mt-3 text-slate-400">Property management is available for Admin and Agent users.</p>}
       {canManage && (
         <div className="mt-6 grid gap-8 lg:grid-cols-2">
           <div>
             <h2 className="text-xl font-semibold">{editingId ? 'Edit Property' : 'Create Property'}</h2>
-            <form onSubmit={handleSubmit} className="mt-4 space-y-3 rounded-lg bg-white p-4 shadow-sm">
-              <input className="w-full rounded border px-3 py-2" placeholder="Title" value={form.title} onChange={(e) => setField('title', e.target.value)} />
-              <textarea className="w-full rounded border px-3 py-2" placeholder="Description" value={form.description} onChange={(e) => setField('description', e.target.value)} />
+            <form onSubmit={handleSubmit} className="mt-4 space-y-3 rounded-lg bg-slate-900 p-4 shadow-sm">
+              <input className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Title" value={form.title} onChange={(e) => setField('title', e.target.value)} />
+              <textarea className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Description" value={form.description} onChange={(e) => setField('description', e.target.value)} />
               <div className="grid grid-cols-2 gap-2">
-                <input className="rounded border px-3 py-2" placeholder="Price" value={form.price} onChange={(e) => setField('price', e.target.value)} />
-                <input className="rounded border px-3 py-2" placeholder="Square meters" value={form.squareMeters} onChange={(e) => setField('squareMeters', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Price" value={form.price} onChange={(e) => setField('price', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Square meters" value={form.squareMeters} onChange={(e) => setField('squareMeters', e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <input className="rounded border px-3 py-2" placeholder="Bedrooms" value={form.bedrooms} onChange={(e) => setField('bedrooms', e.target.value)} />
-                <input className="rounded border px-3 py-2" placeholder="Bathrooms" value={form.bathrooms} onChange={(e) => setField('bathrooms', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Bedrooms" value={form.bedrooms} onChange={(e) => setField('bedrooms', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Bathrooms" value={form.bathrooms} onChange={(e) => setField('bathrooms', e.target.value)} />
               </div>
-              <input className="w-full rounded border px-3 py-2" placeholder="Address" value={form.address} onChange={(e) => setField('address', e.target.value)} />
+              <input className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Address" value={form.address} onChange={(e) => setField('address', e.target.value)} />
               <div className="grid grid-cols-2 gap-2">
-                <input className="rounded border px-3 py-2" placeholder="CityId" value={form.cityId} onChange={(e) => setField('cityId', e.target.value)} />
-                <input className="rounded border px-3 py-2" placeholder="AreaId" value={form.areaId} onChange={(e) => setField('areaId', e.target.value)} />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <input className="rounded border px-3 py-2" placeholder="PropertyType (1-6)" value={form.propertyType} onChange={(e) => setField('propertyType', e.target.value)} />
-                <input className="rounded border px-3 py-2" placeholder="ListingType (1-2)" value={form.listingType} onChange={(e) => setField('listingType', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="CityId" value={form.cityId} onChange={(e) => setField('cityId', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="AreaId" value={form.areaId} onChange={(e) => setField('areaId', e.target.value)} />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <input className="rounded border px-3 py-2" placeholder="Status (1-5)" value={form.status} onChange={(e) => setField('status', e.target.value)} />
-                <input className="rounded border px-3 py-2" placeholder="AgentProfileId (Admin)" value={form.agentProfileId} onChange={(e) => setField('agentProfileId', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="PropertyType (1-6)" value={form.propertyType} onChange={(e) => setField('propertyType', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="ListingType (1-2)" value={form.listingType} onChange={(e) => setField('listingType', e.target.value)} />
               </div>
-              <input className="w-full rounded border px-3 py-2" placeholder="Amenity IDs CSV (e.g. 1,2,3)" value={form.amenityIds} onChange={(e) => setField('amenityIds', e.target.value)} />
-              <input className="w-full rounded border px-3 py-2" placeholder="Image URLs CSV" value={form.imageUrls} onChange={(e) => setField('imageUrls', e.target.value)} />
-              <input className="w-full rounded border px-3 py-2" placeholder="Primary image URL" value={form.primaryImageUrl} onChange={(e) => setField('primaryImageUrl', e.target.value)} />
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              <div className="grid grid-cols-2 gap-2">
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Status (1-5)" value={form.status} onChange={(e) => setField('status', e.target.value)} />
+                <input className="rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="AgentProfileId (Admin)" value={form.agentProfileId} onChange={(e) => setField('agentProfileId', e.target.value)} />
+              </div>
+              <input className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Amenity IDs CSV (e.g. 1,2,3)" value={form.amenityIds} onChange={(e) => setField('amenityIds', e.target.value)} />
+              <input className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Image URLs CSV" value={form.imageUrls} onChange={(e) => setField('imageUrls', e.target.value)} />
+              <input className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100" placeholder="Primary image URL" value={form.primaryImageUrl} onChange={(e) => setField('primaryImageUrl', e.target.value)} />
+              {error && <p className="text-sm text-red-400">{error}</p>}
               <div className="flex gap-2">
                 <button className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-60" type="submit" disabled={saving}>
                   {saving ? 'Saving...' : editingId ? 'Update Property' : 'Create Property'}
                 </button>
                 {editingId && (
-                  <button className="rounded border px-4 py-2" type="button" onClick={resetForm}>
+                  <button className="rounded border border-slate-700 bg-black px-4 py-2 text-slate-100" type="button" onClick={resetForm}>
                     Cancel Edit
                   </button>
                 )}
@@ -370,7 +384,7 @@ function Dashboard() {
             </form>
 
             {editingId && (
-              <div className="mt-6 rounded-lg bg-white p-4 shadow-sm">
+              <div className="mt-6 rounded-lg bg-slate-900 p-4 shadow-sm">
                 <h3 className="text-lg font-semibold">Property Images</h3>
                 <div className="mt-3 space-y-3">
                   <input
@@ -379,30 +393,30 @@ function Dashboard() {
                     multiple
                     onChange={(e) => void handleUploadImages(e.target.files)}
                     disabled={imageUploading}
-                    className="w-full rounded border px-3 py-2"
+                    className="w-full rounded border border-slate-700 bg-black px-3 py-2 text-slate-100"
                   />
-                  {imageUploading && <p className="text-sm text-slate-600">Uploading images...</p>}
-                  {imageLoading && <p className="text-sm text-slate-600">Loading images...</p>}
-                  {imageError && <p className="text-sm text-red-600">{imageError}</p>}
-                  {imageSuccess && <p className="text-sm text-green-700">{imageSuccess}</p>}
+                  {imageUploading && <p className="text-sm text-slate-400">Uploading images...</p>}
+                  {imageLoading && <p className="text-sm text-slate-400">Loading images...</p>}
+                  {imageError && <p className="text-sm text-red-400">{imageError}</p>}
+                  {imageSuccess && <p className="text-sm text-green-400">{imageSuccess}</p>}
 
-                  {!imageLoading && images.length === 0 && <p className="text-sm text-slate-600">No images uploaded yet.</p>}
+                  {!imageLoading && images.length === 0 && <p className="text-sm text-slate-400">No images uploaded yet.</p>}
 
                   {!imageLoading && images.length > 0 && (
                     <div className="space-y-3">
                       {[...images]
                         .sort((a, b) => a.sortOrder - b.sortOrder)
                         .map((image, idx, arr) => (
-                          <div key={image.id} className="flex flex-wrap items-center gap-3 rounded border p-2">
+                          <div key={image.id} className="flex flex-wrap items-center gap-3 rounded border border-slate-700 bg-black p-2">
                             <img src={resolveImageUrl(image.imageUrl)} alt="Property" className="h-20 w-28 rounded object-cover" />
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-xs text-slate-600">{image.isPrimary ? 'Primary' : `Order ${image.sortOrder + 1}`}</span>
-                              <button type="button" className="rounded border px-2 py-1 text-xs" onClick={() => void handleSetPrimaryImage(image.id)}>
+                              <span className="text-xs text-slate-300">{image.isPrimary ? 'Primary' : `Order ${image.sortOrder + 1}`}</span>
+                              <button type="button" className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200" onClick={() => void handleSetPrimaryImage(image.id)}>
                                 Set Primary
                               </button>
                               <button
                                 type="button"
-                                className="rounded border px-2 py-1 text-xs"
+                                className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200"
                                 disabled={idx === 0}
                                 onClick={() => void moveImage(image.id, 'up')}
                               >
@@ -410,7 +424,7 @@ function Dashboard() {
                               </button>
                               <button
                                 type="button"
-                                className="rounded border px-2 py-1 text-xs"
+                                className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-200"
                                 disabled={idx === arr.length - 1}
                                 onClick={() => void moveImage(image.id, 'down')}
                               >
@@ -418,7 +432,7 @@ function Dashboard() {
                               </button>
                               <button
                                 type="button"
-                                className="rounded border border-red-300 px-2 py-1 text-xs text-red-700"
+                                className="rounded border border-red-600 px-2 py-1 text-xs text-red-400"
                                 onClick={() => void handleDeleteImage(image.id)}
                               >
                                 Delete
@@ -435,26 +449,26 @@ function Dashboard() {
 
           <div>
             <h2 className="text-xl font-semibold">Managed Properties</h2>
-            {loading && <p className="mt-3 text-slate-600">Loading...</p>}
+            {loading && <p className="mt-3 text-slate-400">Loading...</p>}
             {!loading && (
               <div className="mt-4 space-y-3">
                 {items.map((property) => (
-                  <div key={property.id} className="rounded-lg bg-white p-4 shadow-sm">
+                  <div key={property.id} className="rounded-lg bg-slate-900 p-4 shadow-sm">
                     <p className="font-semibold">{property.title}</p>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-300">
                       {property.city} / {property.area} | {property.price}
                     </p>
                     <div className="mt-2 flex gap-2">
-                      <button className="rounded border px-3 py-1 text-sm" type="button" onClick={() => startEdit(property.id)}>
+                      <button className="rounded border border-slate-700 px-3 py-1 text-sm text-slate-200" type="button" onClick={() => startEdit(property.id)}>
                         Edit
                       </button>
-                      <button className="rounded border border-red-300 px-3 py-1 text-sm text-red-700" type="button" onClick={() => void handleDelete(property.id)}>
+                      <button className="rounded border border-red-600 px-3 py-1 text-sm text-red-400" type="button" onClick={() => void handleDelete(property.id)}>
                         Delete
                       </button>
                     </div>
                   </div>
                 ))}
-                {items.length === 0 && <p className="text-slate-600">No properties yet.</p>}
+                {items.length === 0 && <p className="text-slate-400">No properties yet.</p>}
               </div>
             )}
           </div>
@@ -465,3 +479,4 @@ function Dashboard() {
 }
 
 export default Dashboard
+

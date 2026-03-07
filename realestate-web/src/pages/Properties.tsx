@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import PageTitle from '../components/PageTitle'
 import PropertyCard from '../components/PropertyCard'
 import SearchFilters, { type PropertyFilterState } from '../components/SearchFilters'
+import Button from '../components/ui/Button'
 import useAuthState from '../hooks/useAuthState'
 import { getMyFavorites } from '../services/favoritesService'
 import { getAreas, getCities, getProperties, type LookupItem, type PropertyListItemResponse } from '../services/propertyService'
@@ -84,16 +85,23 @@ function Properties() {
 
   const query = useMemo(() => {
     const toNum = (value: string) => {
+      if (value.trim() === '') {
+        return undefined
+      }
       const parsed = Number(value)
       return Number.isFinite(parsed) ? parsed : undefined
+    }
+    const toPositiveInt = (value: string) => {
+      const parsed = toNum(value)
+      return parsed && parsed > 0 ? parsed : undefined
     }
 
     return {
       searchTerm: filters.searchTerm || undefined,
-      cityId: toNum(filters.cityId),
-      areaId: toNum(filters.areaId),
-      listingType: toNum(filters.listingType),
-      propertyType: toNum(filters.propertyType),
+      cityId: toPositiveInt(filters.cityId),
+      areaId: toPositiveInt(filters.areaId),
+      listingType: toPositiveInt(filters.listingType),
+      propertyType: toPositiveInt(filters.propertyType),
       minPrice: toNum(filters.minPrice),
       maxPrice: toNum(filters.maxPrice),
       minBedrooms: toNum(filters.minBedrooms),
@@ -117,7 +125,16 @@ function Properties() {
         setItems(response.items)
         setTotalPages(response.totalPages || 1)
       } catch (err: any) {
-        setError(err?.response?.data?.message ?? 'Failed to load properties.')
+        const responseMessage = err?.response?.data?.message
+        const validationErrors = err?.response?.data?.errors
+        if (validationErrors) {
+          const messages = Object.values(validationErrors)
+            .flatMap((x) => (Array.isArray(x) ? x : [String(x)]))
+            .filter(Boolean)
+          setError(messages.length > 0 ? messages.join(' | ') : 'Failed to load properties.')
+        } else {
+          setError(responseMessage ?? 'Failed to load properties.')
+        }
       } finally {
         setLoading(false)
       }
@@ -175,17 +192,24 @@ function Properties() {
 
   return (
     <section>
-      <PageTitle title="Properties" />
-      <div className="mt-6 space-y-6">
+      <PageTitle
+        title="Properties"
+        subtitle="Explore verified listings with filters for location, budget, and home details."
+      />
+      <div className="mt-8 space-y-8">
         <SearchFilters filters={filters} cities={cities} areas={areas} onChange={setFilterField} onSubmit={onSubmit} onClear={onClear} />
 
-        {loading && <p className="text-slate-600">Loading properties...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-        {!loading && !error && items.length === 0 && <p className="text-slate-600">No properties match your filters.</p>}
+        {loading && <p className="text-slate-600 dark:text-slate-400">Loading properties...</p>}
+        {error && <p className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">{error}</p>}
+        {!loading && !error && items.length === 0 && (
+          <p className="rounded-xl border border-slate-800 bg-slate-900 px-4 py-6 text-slate-600   dark:text-slate-400">
+            No properties match your filters.
+          </p>
+        )}
 
         {!loading && !error && items.length > 0 && (
           <>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {items.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -195,16 +219,16 @@ function Properties() {
                 />
               ))}
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <button className="rounded border px-3 py-1 disabled:opacity-40" onClick={() => goToPage(page - 1)} disabled={page <= 1}>
+            <div className="flex items-center justify-center gap-2 pt-2">
+              <Button variant="secondary" onClick={() => goToPage(page - 1)} disabled={page <= 1}>
                 Previous
-              </button>
-              <span className="text-sm text-slate-700">
+              </Button>
+              <span className="text-sm text-slate-700 dark:text-slate-300">
                 Page {page} of {totalPages}
               </span>
-              <button className="rounded border px-3 py-1 disabled:opacity-40" onClick={() => goToPage(page + 1)} disabled={page >= totalPages}>
+              <Button variant="secondary" onClick={() => goToPage(page + 1)} disabled={page >= totalPages}>
                 Next
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -214,3 +238,4 @@ function Properties() {
 }
 
 export default Properties
+

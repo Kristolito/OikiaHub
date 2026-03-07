@@ -77,33 +77,33 @@ function AdminProperties() {
   return (
     <section>
       <PageTitle title="Admin Property Moderation" />
-      {loading && <p className="mt-3 text-slate-600">Loading properties...</p>}
-      {error && <p className="mt-3 text-red-600">{error}</p>}
-      {success && <p className="mt-3 text-green-700">{success}</p>}
-      {!loading && !error && properties.length === 0 && <p className="mt-3 text-slate-600">No properties found.</p>}
+      {loading && <p className="mt-3 text-slate-400">Loading properties...</p>}
+      {error && <p className="mt-3 text-red-400">{error}</p>}
+      {success && <p className="mt-3 text-green-400">{success}</p>}
+      {!loading && !error && properties.length === 0 && <p className="mt-3 text-slate-400">No properties found.</p>}
       {!loading && !error && properties.length > 0 && (
         <div className="mt-6 space-y-3">
           {properties.map((property) => (
-            <article key={property.id} className="rounded-lg bg-white p-4 shadow-sm">
+            <article key={property.id} className="rounded-lg border border-slate-800 bg-slate-900 p-4 shadow-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="text-lg font-semibold">{property.title}</h3>
-                  <p className="text-sm text-slate-600">
+                  <h3 className="text-lg font-semibold text-slate-100">{property.title}</h3>
+                  <p className="text-sm text-slate-300">
                     {property.city}, {property.area}
                   </p>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-slate-300">
                     Agent: {property.agentName} ({property.agentEmail})
                   </p>
-                  <p className="text-sm text-slate-600">Price: ${property.price.toLocaleString()}</p>
-                  <p className="text-sm text-slate-600">Current status: {statusLabel(property.status)}</p>
+                  <p className="text-sm text-slate-300">Price: ${property.price.toLocaleString()}</p>
+                  <p className="text-sm text-slate-300">Current status: {statusLabel(property.status)}</p>
                 </div>
-                <Link to={`/admin/properties/${property.id}`} className="rounded border px-3 py-2 text-sm">
+                <Link to={`/admin/properties/${property.id}`} className="rounded border border-slate-700 px-3 py-2 text-sm text-slate-200">
                   Review
                 </Link>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <select
-                  className="rounded border px-2 py-1 text-sm"
+                  className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-slate-100"
                   value={statusByProperty[property.id] ?? property.status}
                   onChange={(e) =>
                     setStatusByProperty((prev) => ({
@@ -122,7 +122,7 @@ function AdminProperties() {
                   Update Status
                 </button>
                 <button
-                  className="rounded border border-red-300 px-3 py-1 text-sm text-red-700"
+                  className="rounded border border-red-600 px-3 py-1 text-sm text-red-400"
                   type="button"
                   onClick={() => void remove(property.id)}
                 >

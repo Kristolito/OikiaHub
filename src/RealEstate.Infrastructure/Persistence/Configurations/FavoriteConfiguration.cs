@@ -13,7 +13,7 @@ public class FavoriteConfiguration : IEntityTypeConfiguration<Favorite>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.CreatedAt)
-            .HasDefaultValueSql("UTC_TIMESTAMP()")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP(6)")
             .IsRequired();
 
         builder.HasIndex(x => new { x.UserId, x.PropertyId })

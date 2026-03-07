@@ -47,11 +47,11 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
             .IsRequired();
 
         builder.Property(x => x.CreatedAt)
-            .HasDefaultValueSql("UTC_TIMESTAMP()")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP(6)")
             .IsRequired();
 
         builder.Property(x => x.UpdatedAt)
-            .HasDefaultValueSql("UTC_TIMESTAMP()")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP(6)")
             .IsRequired();
 
         builder.HasIndex(x => x.Price);

@@ -65,17 +65,17 @@ function PropertyDetails() {
   return (
     <section>
       <PageTitle title="Property Details" />
-      {loading && <p className="mt-3 text-slate-600">Loading property...</p>}
-      {error && <p className="mt-3 text-red-600">{error}</p>}
+      {loading && <p className="mt-3 text-slate-600 dark:text-slate-400">Loading property...</p>}
+      {error && <p className="mt-3 text-red-600 dark:text-red-400">{error}</p>}
       {!loading && !error && property && (
         <div className="mt-6 space-y-6">
           <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">{property.title}</h2>
-            <p className="text-slate-600">
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{property.title}</h2>
+            <p className="text-slate-600 dark:text-slate-400">
               {property.city}, {property.area}
             </p>
-            <p className="text-3xl font-bold">${property.price.toLocaleString()}</p>
-            <p className="text-slate-700">{property.description}</p>
+            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">${property.price.toLocaleString()}</p>
+            <p className="text-slate-700 dark:text-slate-300">{property.description}</p>
             <FavoriteButton propertyId={property.id} isFavorited={isFavorited} onChanged={setIsFavorited} />
           </div>
 
@@ -85,11 +85,11 @@ function PropertyDetails() {
                 <img key={image.id} src={resolveImageUrl(image.imageUrl)} alt={property.title} className="h-44 w-full rounded-lg object-cover" />
               ))
             ) : (
-              <div className="rounded-lg border border-dashed p-6 text-slate-500">No images available.</div>
+              <div className="rounded-lg border border-dashed border-slate-300 p-6 text-slate-500 dark:border-slate-700 dark:text-slate-400">No images available.</div>
             )}
           </div>
 
-          <div className="grid gap-4 rounded-lg bg-white p-4 shadow-sm sm:grid-cols-2">
+          <div className="grid gap-4 rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm   sm:grid-cols-2">
             <p>Bedrooms: {property.bedrooms}</p>
             <p>Bathrooms: {property.bathrooms}</p>
             <p>Square Meters: {property.squareMeters}</p>
@@ -98,33 +98,33 @@ function PropertyDetails() {
             <p>Year Built: {property.yearBuilt ?? '-'}</p>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h3 className="text-lg font-semibold">Amenities</h3>
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm  ">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Amenities</h3>
             {property.amenities.length > 0 ? (
               <ul className="mt-2 flex flex-wrap gap-2">
                 {property.amenities.map((amenity) => (
-                  <li key={amenity.id} className="rounded bg-slate-100 px-3 py-1 text-sm">
+                  <li key={amenity.id} className="rounded bg-slate-100 px-3 py-1 text-sm dark:bg-slate-800">
                     {amenity.name}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-slate-600">No amenities listed.</p>
+              <p className="mt-2 text-slate-600 dark:text-slate-400">No amenities listed.</p>
             )}
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h3 className="text-lg font-semibold">Agent</h3>
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm  ">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Agent</h3>
             <p className="mt-1">
               {property.agent.firstName} {property.agent.lastName}
             </p>
-            <p className="text-slate-600">{property.agent.email}</p>
-            <p className="text-slate-600">{property.agent.phoneNumber}</p>
-            <p className="text-slate-600">{property.agent.agencyName}</p>
+            <p className="text-slate-600 dark:text-slate-400">{property.agent.email}</p>
+            <p className="text-slate-600 dark:text-slate-400">{property.agent.phoneNumber}</p>
+            <p className="text-slate-600 dark:text-slate-400">{property.agent.agencyName}</p>
           </div>
 
-          <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h3 className="text-lg font-semibold">Contact Agent</h3>
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm  ">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Contact Agent</h3>
             <form
               className="mt-3 space-y-3"
               onSubmit={(event) => {
@@ -165,13 +165,13 @@ function PropertyDetails() {
                 })()
               }}
             >
-              <input className="w-full rounded border px-3 py-2" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-              <input className="w-full rounded border px-3 py-2" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <input className="w-full rounded border px-3 py-2" placeholder="Phone Number (optional)" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-              <textarea className="w-full rounded border px-3 py-2" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
+              <input className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 dark:border-slate-700 " placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              <input className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 dark:border-slate-700 " placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 dark:border-slate-700 " placeholder="Phone Number (optional)" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+              <textarea className="w-full rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 dark:border-slate-700 " placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} rows={4} />
               {inquiryError && <p className="text-sm text-red-600">{inquiryError}</p>}
               {inquirySuccess && <p className="text-sm text-green-700">{inquirySuccess}</p>}
-              <button type="submit" className="rounded bg-slate-900 px-4 py-2 text-white disabled:opacity-60" disabled={inquiryLoading}>
+              <button type="submit" className="rounded-xl bg-slate-900 px-4 py-2 text-white disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900" disabled={inquiryLoading}>
                 {inquiryLoading ? 'Sending...' : 'Send Inquiry'}
               </button>
             </form>
@@ -183,3 +183,4 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails
+

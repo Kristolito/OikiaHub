@@ -1,4 +1,4 @@
-﻿CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
+CREATE TABLE IF NOT EXISTS `__EFMigrationsHistory` (
     `MigrationId` varchar(150) CHARACTER SET utf8mb4 NOT NULL,
     `ProductVersion` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
     CONSTRAINT `PK___EFMigrationsHistory` PRIMARY KEY (`MigrationId`)
@@ -40,8 +40,8 @@ CREATE TABLE `Users` (
     `Email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `PasswordHash` varchar(500) CHARACTER SET utf8mb4 NOT NULL,
     `RoleId` int NOT NULL,
-    `CreatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
-    `UpdatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
+    `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `UpdatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT `PK_Users` PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Users_Roles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `Roles` (`Id`) ON DELETE RESTRICT
 ) CHARACTER SET=utf8mb4;
@@ -77,8 +77,8 @@ CREATE TABLE `Properties` (
     `Floor` int NULL,
     `Status` int NOT NULL DEFAULT 1,
     `AgentProfileId` int NOT NULL,
-    `CreatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
-    `UpdatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
+    `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `UpdatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT `PK_Properties` PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Properties_AgentProfiles_AgentProfileId` FOREIGN KEY (`AgentProfileId`) REFERENCES `AgentProfiles` (`Id`) ON DELETE RESTRICT,
     CONSTRAINT `FK_Properties_Areas_AreaId` FOREIGN KEY (`AreaId`) REFERENCES `Areas` (`Id`) ON DELETE RESTRICT,
@@ -89,7 +89,7 @@ CREATE TABLE `Favorites` (
     `Id` int NOT NULL AUTO_INCREMENT,
     `UserId` int NOT NULL,
     `PropertyId` int NOT NULL,
-    `CreatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
+    `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT `PK_Favorites` PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Favorites_Properties_PropertyId` FOREIGN KEY (`PropertyId`) REFERENCES `Properties` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_Favorites_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
@@ -103,7 +103,7 @@ CREATE TABLE `Inquiries` (
     `Email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `PhoneNumber` varchar(30) CHARACTER SET utf8mb4 NULL,
     `Message` varchar(2000) CHARACTER SET utf8mb4 NOT NULL,
-    `CreatedAt` datetime(6) NOT NULL DEFAULT UTC_TIMESTAMP(),
+    `CreatedAt` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     CONSTRAINT `PK_Inquiries` PRIMARY KEY (`Id`),
     CONSTRAINT `FK_Inquiries_Properties_PropertyId` FOREIGN KEY (`PropertyId`) REFERENCES `Properties` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_Inquiries_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
