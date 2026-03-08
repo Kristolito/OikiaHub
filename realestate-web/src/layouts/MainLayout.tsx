@@ -20,10 +20,10 @@ const workspaceLinks: LinkItem[] = [
 ]
 
 function linkClass(isActive: boolean) {
-  return `rounded-lg px-3 py-2 text-sm font-medium transition ${
+  return `rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out ${
     isActive
-      ? 'bg-slate-900 text-white'
-      : 'text-slate-300 hover:bg-slate-800 hover:text-slate-100'
+      ? 'bg-elevated text-text-primary ring-1 ring-primary/60'
+      : 'text-text-secondary hover:bg-surface hover:text-text-primary'
   }`
 }
 
@@ -60,24 +60,24 @@ function MainLayout() {
   const allMobileLinks = [...primaryLinks, ...userLinks, ...workspaceLinks, ...adminLinks, ...authLinks]
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/85 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3">
+    <div className="min-h-screen bg-main">
+      <header className="sticky top-0 z-30 border-b border-border bg-nav/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-4 py-4">
           <Link to="/" className="flex items-center gap-3">
             {!logoError && (
               <img
                 src="/oikiahub-logo.png"
                 alt="OikiaHub"
-                className="h-10 w-auto max-w-[180px] object-contain"
+                className="h-20 w-auto max-w-[420px] object-contain object-left"
                 onError={() => setLogoError(true)}
               />
             )}
-            {logoError && <span className="text-xl font-semibold tracking-tight text-slate-100">OikiaHub</span>}
+            {logoError && <span className="text-2xl font-semibold tracking-tight text-text-primary">OikiaHub</span>}
           </Link>
 
-          <div className="hidden items-center gap-2 xl:flex">
+          <div className="hidden items-center gap-4 xl:flex">
             {navGroups.map((group) => (
-              <div key={group.label} className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900 p-1">
+              <div key={group.label} className="flex items-center gap-1 rounded-xl border border-border bg-surface px-1 py-1">
                 {group.links.map((link) => (
                   <NavLink key={link.to} to={link.to} className={({ isActive }) => linkClass(isActive)}>
                     {link.label}
@@ -86,12 +86,19 @@ function MainLayout() {
               </div>
             ))}
             {authLinks.length > 0 && (
-              <div className="ml-1 flex items-center gap-1">
-                {authLinks.map((link) => (
-                  <NavLink key={link.to} to={link.to} className={({ isActive }) => linkClass(isActive)}>
-                    {link.label}
-                  </NavLink>
-                ))}
+              <div className="ml-2 flex items-center gap-3">
+                <NavLink
+                  to="/login"
+                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated"
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-primary-hover"
+                >
+                  Register
+                </NavLink>
               </div>
             )}
           </div>
@@ -99,21 +106,27 @@ function MainLayout() {
           <button
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-200 xl:hidden"
+            className="rounded-lg border border-slate-700 bg-surface px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated xl:hidden"
           >
             Menu
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="border-t border-slate-800 bg-slate-950 px-4 py-3 xl:hidden">
+          <div className="border-t border-border bg-nav px-4 py-4 xl:hidden">
             <nav className="grid gap-2">
               {allMobileLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) => linkClass(isActive)}
+                  className={({ isActive }) =>
+                    `rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ease-in-out ${
+                      isActive
+                        ? 'bg-primary text-white'
+                        : 'text-text-secondary hover:bg-surface hover:text-text-primary'
+                    }`
+                  }
                 >
                   {link.label}
                 </NavLink>
@@ -123,7 +136,7 @@ function MainLayout() {
         )}
       </header>
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-10">
+      <main className="mx-auto w-full max-w-7xl px-4 py-20">
         <Outlet />
       </main>
     </div>

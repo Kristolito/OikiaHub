@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using RealEstate.Application.DTOs.Auth;
 using RealEstate.Infrastructure;
 using RealEstate.Application.Validators.Auth;
+using RealEstate.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "your-super-secret-jwt-key-change-me";
@@ -87,5 +88,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/", () => Results.Ok("RealEstate API is running."));
+
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var seeder = scope.ServiceProvider.GetRequiredService<DevelopmentDataSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();

@@ -95,20 +95,20 @@ function Home() {
   }
 
   return (
-    <section className="space-y-10">
-      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-8 sm:p-10">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+    <section className="space-y-12">
+      <div className="overflow-hidden rounded-2xl border border-border bg-[linear-gradient(180deg,#0B1220_0%,#0F172A_100%)] p-8 shadow-panel sm:p-10 lg:p-12">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="mb-3 inline-flex rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-300">
+            <p className="mb-4 inline-flex rounded-full border border-slate-700 bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide text-text-secondary">
               Real Estate Marketplace
             </p>
-            <h1 className="text-4xl font-bold leading-tight text-slate-100 sm:text-5xl">
+            <h1 className="text-5xl font-bold leading-tight text-text-primary">
               Find Your Next Home With Confidence
             </h1>
-            <p className="mt-4 max-w-xl text-base text-slate-300 sm:text-lg">
+            <p className="mt-5 max-w-xl text-base text-text-secondary sm:text-lg">
               Browse verified listings, compare neighborhoods, and connect directly with agents in one clean experience.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <form
                 onSubmit={(event) => {
                   event.preventDefault()
@@ -121,38 +121,38 @@ function Home() {
                   value={heroSearch}
                   onChange={(e) => setHeroSearch(e.target.value)}
                   placeholder="Search by city, area, title..."
-                  className="w-full rounded-xl border border-slate-700 bg-black px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500"
+                  className="w-full rounded-lg border border-border bg-nav px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-all duration-200 ease-in-out focus:border-primary focus:outline-none"
                 />
-                <button type="submit" className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white">
+                <button type="submit" className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-primary-hover">
                   Search
                 </button>
               </form>
-              <Link to="/properties" className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-white">
+              <Link to="/properties" className="rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 ease-in-out hover:bg-primary-hover">
                 Explore Properties
               </Link>
-              <Link to="/dashboard" className="rounded-xl border border-slate-600 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
+              <Link to="/dashboard" className="rounded-lg border border-slate-700 bg-transparent px-5 py-3 text-sm font-semibold text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated">
                 Manage Listings
               </Link>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-700 bg-black/40 p-5">
-            <p className="text-sm text-slate-400">Platform Highlights</p>
+          <div className="rounded-2xl border border-slate-700 bg-surface p-6 shadow-soft">
+            <p className="text-sm text-text-secondary">Platform Highlights</p>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-2xl font-bold text-slate-100">10k+</p>
-                <p className="text-sm text-slate-400">Active seekers</p>
+              <div className="rounded-xl border border-slate-700 bg-elevated p-6 shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <p className="text-2xl font-bold text-accent">10k+</p>
+                <p className="text-sm text-text-secondary">Active seekers</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-2xl font-bold text-slate-100">2k+</p>
-                <p className="text-sm text-slate-400">Verified listings</p>
+              <div className="rounded-xl border border-slate-700 bg-elevated p-6 shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <p className="text-2xl font-bold text-accent">2k+</p>
+                <p className="text-sm text-text-secondary">Verified listings</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-2xl font-bold text-slate-100">150+</p>
-                <p className="text-sm text-slate-400">Partner agents</p>
+              <div className="rounded-xl border border-slate-700 bg-elevated p-6 shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <p className="text-2xl font-bold text-accent">150+</p>
+                <p className="text-sm text-text-secondary">Partner agents</p>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <p className="text-2xl font-bold text-slate-100">24/7</p>
-                <p className="text-sm text-slate-400">Availability</p>
+              <div className="rounded-xl border border-slate-700 bg-elevated p-6 shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <p className="text-2xl font-bold text-accent">24/7</p>
+                <p className="text-sm text-text-secondary">Availability</p>
               </div>
             </div>
           </div>
@@ -162,24 +162,24 @@ function Home() {
       {recentlyViewed.length > 0 && (
         <div className="space-y-4">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-100">Recently Viewed</h2>
-            <p className="text-sm text-slate-400">Jump back to homes you opened recently.</p>
+            <h2 className="text-2xl font-semibold text-text-primary">Recently Viewed</h2>
+            <p className="text-base text-text-secondary">Jump back to homes you opened recently.</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {recentlyViewed.map((property) => (
-              <article key={property.id} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-                <div className="relative aspect-[16/10] bg-black">
+              <article key={property.id} className="overflow-hidden rounded-2xl border border-border bg-surface shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <div className="relative aspect-[16/10] bg-nav">
                   {property.primaryImageUrl ? (
                     <img src={resolveImageUrl(property.primaryImageUrl)} alt={property.title} className="h-full w-full object-cover" />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-slate-500">No image</div>
+                    <div className="flex h-full items-center justify-center text-sm text-text-muted">No image</div>
                   )}
                 </div>
-                <div className="space-y-2 p-4">
-                  <h3 className="line-clamp-1 text-base font-semibold text-slate-100">{property.title}</h3>
-                  <p className="text-xs text-slate-400">{property.city}, {property.area}</p>
-                  <p className="text-sm font-semibold text-slate-100">${property.price.toLocaleString()}</p>
-                  <Link to={`/properties/${property.id}`} className="text-xs font-semibold text-sky-300 hover:text-sky-200">
+                <div className="space-y-2 p-6">
+                  <h3 className="line-clamp-1 text-base font-semibold text-text-primary">{property.title}</h3>
+                  <p className="text-xs text-text-secondary">{property.city}, {property.area}</p>
+                  <p className="text-sm font-semibold text-text-primary">${property.price.toLocaleString()}</p>
+                  <Link to={`/properties/${property.id}`} className="text-xs font-semibold text-primary transition-all duration-200 ease-in-out hover:text-primary-hover">
                     View again
                   </Link>
                 </div>
@@ -192,20 +192,20 @@ function Home() {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-100">Featured Homes</h2>
-            <p className="text-sm text-slate-400">A quick look at the newest properties on OikiaHub.</p>
+            <h2 className="text-2xl font-semibold text-text-primary">Featured Homes</h2>
+            <p className="text-base text-text-secondary">A quick look at the newest properties on OikiaHub.</p>
           </div>
           <div className="hidden items-center gap-2 sm:flex">
             <button
               type="button"
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+              className="rounded-lg border border-slate-700 bg-transparent px-3 py-2 text-sm text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated"
               onClick={() => scrollSlider('left')}
             >
               Prev
             </button>
             <button
               type="button"
-              className="rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+              className="rounded-lg border border-slate-700 bg-transparent px-3 py-2 text-sm text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated"
               onClick={() => scrollSlider('right')}
             >
               Next
@@ -213,36 +213,36 @@ function Home() {
           </div>
         </div>
 
-        {loading && <p className="text-slate-400">Loading featured homes...</p>}
+        {loading && <p className="text-text-secondary">Loading featured homes...</p>}
         {error && <p className="text-red-400">{error}</p>}
 
         {!loading && !error && featured.length > 0 && (
           <div ref={sliderRef} className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
             {featured.map((property) => (
-              <article key={property.id} className="w-[320px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
-                <div className="relative aspect-[16/10] bg-black">
+              <article key={property.id} className="w-[320px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-surface shadow-soft transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-panel">
+                <div className="relative aspect-[16/10] bg-nav">
                   {property.primaryImageUrl ? (
                     <img src={resolveImageUrl(property.primaryImageUrl)} alt={property.title} className="h-full w-full object-cover" />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-slate-500">No image</div>
+                    <div className="flex h-full items-center justify-center text-sm text-text-muted">No image</div>
                   )}
-                  <span className="absolute left-3 top-3 rounded-full border border-slate-600 bg-black/70 px-2 py-1 text-xs font-semibold text-slate-100">
+                  <span className="absolute left-3 top-3 rounded-full border border-slate-700 bg-nav/90 px-2 py-1 text-xs font-semibold text-text-primary">
                     {property.listingType === 2 ? 'For Rent' : 'For Sale'}
                   </span>
                 </div>
-                <div className="space-y-2 p-4">
-                  <h3 className="line-clamp-1 text-lg font-semibold text-slate-100">{property.title}</h3>
-                  <p className="text-sm text-slate-300">
+                <div className="space-y-2 p-6">
+                  <h3 className="line-clamp-1 text-lg font-semibold text-text-primary">{property.title}</h3>
+                  <p className="text-sm text-text-secondary">
                     {property.city}, {property.area}
                   </p>
-                  <p className="text-sm text-slate-300">
+                  <p className="text-sm text-text-secondary">
                     {property.bedrooms} bd | {property.bathrooms} ba | {property.squareMeters} sqm
                   </p>
                   <div className="flex items-center justify-between pt-1">
-                    <p className="text-lg font-bold text-slate-100">${property.price.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-text-primary">${property.price.toLocaleString()}</p>
                     <Link
                       to={property.id > 0 ? `/properties/${property.id}` : '/properties'}
-                      className="rounded-lg border border-slate-700 bg-black px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800"
+                      className="rounded-lg border border-slate-700 bg-transparent px-3 py-2 text-xs font-semibold text-text-primary transition-all duration-200 ease-in-out hover:bg-elevated"
                     >
                       View
                     </Link>
@@ -253,7 +253,7 @@ function Home() {
           </div>
         )}
 
-        {!loading && !error && featured.length === 0 && <p className="text-slate-400">No featured properties yet.</p>}
+        {!loading && !error && featured.length === 0 && <p className="text-text-secondary">No featured properties yet.</p>}
       </div>
     </section>
   )

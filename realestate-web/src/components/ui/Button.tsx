@@ -7,15 +7,15 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-slate-100 text-slate-900 hover:bg-slate-300',
-  secondary: 'border border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800',
-  ghost: 'text-slate-200 hover:bg-slate-800',
+  primary: 'bg-primary text-white shadow-sm hover:bg-primary-hover',
+  secondary: 'border border-slate-700 bg-transparent text-text-primary hover:bg-elevated',
+  ghost: 'text-text-secondary hover:bg-elevated hover:text-text-primary',
 }
 
 function Button({ className = '', variant = 'primary', ...props }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-60 ${variantClasses[variant]} ${className}`}
       {...props}
     />
   )

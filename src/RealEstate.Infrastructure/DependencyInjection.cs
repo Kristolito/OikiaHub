@@ -44,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<IPropertyImageService, PropertyImageService>();
         services.AddScoped<IAgentService, AgentService>();
+        services.AddScoped<DevelopmentDataSeeder>();
         services.AddScoped<IValidator<CreatePropertyRequest>, CreatePropertyRequestValidator>();
         services.AddScoped<IValidator<UpdatePropertyRequest>, UpdatePropertyRequestValidator>();
         services.AddScoped<IValidator<GetPropertiesRequest>, GetPropertiesRequestValidator>();
