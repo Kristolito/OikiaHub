@@ -14,6 +14,7 @@ import AdminUsers from './pages/AdminUsers'
 import AdminUserDetails from './pages/AdminUserDetails'
 import AdminProperties from './pages/AdminProperties'
 import AdminPropertyDetails from './pages/AdminPropertyDetails'
+import AgentProfile from './pages/AgentProfile'
 import RequireRole from './components/RequireRole'
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/properties/:id" element={<PropertyDetails />} />
+          <Route path="/agents/:id" element={<AgentProfile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -12,6 +12,8 @@ public class PropertyListItemResponse
     public int Bedrooms { get; set; }
     public int Bathrooms { get; set; }
     public decimal SquareMeters { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
     public ListingType ListingType { get; set; }
     public PropertyType PropertyType { get; set; }
     public string? PrimaryImageUrl { get; set; }

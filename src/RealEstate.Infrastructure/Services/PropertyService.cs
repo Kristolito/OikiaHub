@@ -110,6 +110,26 @@ public class PropertyService : IPropertyService
             query = query.Where(x => x.SquareMeters <= request.MaxSquareMeters.Value);
         }
 
+        if (request.MinLatitude.HasValue)
+        {
+            query = query.Where(x => x.Latitude.HasValue && x.Latitude.Value >= request.MinLatitude.Value);
+        }
+
+        if (request.MaxLatitude.HasValue)
+        {
+            query = query.Where(x => x.Latitude.HasValue && x.Latitude.Value <= request.MaxLatitude.Value);
+        }
+
+        if (request.MinLongitude.HasValue)
+        {
+            query = query.Where(x => x.Longitude.HasValue && x.Longitude.Value >= request.MinLongitude.Value);
+        }
+
+        if (request.MaxLongitude.HasValue)
+        {
+            query = query.Where(x => x.Longitude.HasValue && x.Longitude.Value <= request.MaxLongitude.Value);
+        }
+
         if (request.Status.HasValue)
         {
             query = query.Where(x => x.Status == request.Status.Value);
@@ -137,6 +157,8 @@ public class PropertyService : IPropertyService
                 Bedrooms = x.Bedrooms,
                 Bathrooms = x.Bathrooms,
                 SquareMeters = x.SquareMeters,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
                 ListingType = x.ListingType,
                 PropertyType = x.PropertyType,
                 PrimaryImageUrl = x.PropertyImages

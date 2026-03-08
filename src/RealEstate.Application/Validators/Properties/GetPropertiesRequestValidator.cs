@@ -36,6 +36,14 @@ public class GetPropertiesRequestValidator : AbstractValidator<GetPropertiesRequ
             .GreaterThanOrEqualTo(x => x.MinSquareMeters!.Value)
             .When(x => x.MinSquareMeters.HasValue && x.MaxSquareMeters.HasValue);
 
+        RuleFor(x => x.MaxLatitude)
+            .GreaterThanOrEqualTo(x => x.MinLatitude!.Value)
+            .When(x => x.MinLatitude.HasValue && x.MaxLatitude.HasValue);
+
+        RuleFor(x => x.MaxLongitude)
+            .GreaterThanOrEqualTo(x => x.MinLongitude!.Value)
+            .When(x => x.MinLongitude.HasValue && x.MaxLongitude.HasValue);
+
         RuleFor(x => x.SortBy)
             .Must(value => AllowedSortValues.Contains((value ?? "newest").Trim().ToLowerInvariant()))
             .WithMessage("SortBy must be one of: newest, oldest, priceAsc, priceDesc.");

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import useAuthState from '../hooks/useAuthState'
 
 type LinkItem = { to: string; label: string }
@@ -31,6 +31,7 @@ function MainLayout() {
   const { user } = useAuthState()
   const isAdmin = user?.role === 'Admin'
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [logoError, setLogoError] = useState(false)
 
   const adminLinks = useMemo<LinkItem[]>(
     () =>
@@ -62,10 +63,17 @@ function MainLayout() {
     <div className="min-h-screen bg-slate-950">
       <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/85 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-slate-900 dark:bg-slate-100" />
-            <span className="text-xl font-semibold tracking-tight text-slate-100">OikiaHub</span>
-          </div>
+          <Link to="/" className="flex items-center gap-3">
+            {!logoError && (
+              <img
+                src="/oikiahub-logo.png"
+                alt="OikiaHub"
+                className="h-10 w-auto max-w-[180px] object-contain"
+                onError={() => setLogoError(true)}
+              />
+            )}
+            {logoError && <span className="text-xl font-semibold tracking-tight text-slate-100">OikiaHub</span>}
+          </Link>
 
           <div className="hidden items-center gap-2 xl:flex">
             {navGroups.map((group) => (

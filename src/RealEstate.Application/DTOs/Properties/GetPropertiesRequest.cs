@@ -17,6 +17,10 @@ public class GetPropertiesRequest
     public int? MaxBathrooms { get; set; }
     public decimal? MinSquareMeters { get; set; }
     public decimal? MaxSquareMeters { get; set; }
+    public decimal? MinLatitude { get; set; }
+    public decimal? MaxLatitude { get; set; }
+    public decimal? MinLongitude { get; set; }
+    public decimal? MaxLongitude { get; set; }
     public PropertyStatus? Status { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;

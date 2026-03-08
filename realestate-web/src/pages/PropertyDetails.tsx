@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import FavoriteButton from '../components/FavoriteButton'
 import PageTitle from '../components/PageTitle'
 import useAuthState from '../hooks/useAuthState'
@@ -7,6 +7,15 @@ import { checkFavorite } from '../services/favoritesService'
 import { createInquiry } from '../services/inquiriesService'
 import { resolveImageUrl } from '../services/api'
 import { getProperty, type PropertyDetailsResponse } from '../services/propertyService'
+import { addRecentlyViewed } from '../services/recentlyViewedService'
+
+const propertyStatusLabels: Record<number, string> = {
+  1: 'Draft',
+  2: 'Published',
+  3: 'Sold',
+  4: 'Rented',
+  5: 'Archived',
+}
 
 function PropertyDetails() {
   const { id } = useParams()
@@ -23,6 +32,9 @@ function PropertyDetails() {
   const [email, setEmail] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [message, setMessage] = useState('')
+  const [downPayment, setDownPayment] = useState('20')
+  const [interestRate, setInterestRate] = useState('4.5')
+  const [loanYears, setLoanYears] = useState('25')
 
   useEffect(() => {
     if (user) {
@@ -44,6 +56,18 @@ function PropertyDetails() {
       try {
         const response = await getProperty(propertyId)
         setProperty(response)
+        addRecentlyViewed({
+          id: response.id,
+          title: response.title,
+          price: response.price,
+          city: response.city,
+          area: response.area,
+          bedrooms: response.bedrooms,
+          bathrooms: response.bathrooms,
+          squareMeters: response.squareMeters,
+          listingType: response.listingType,
+          primaryImageUrl: response.images.find((x) => x.isPrimary)?.imageUrl ?? response.images[0]?.imageUrl ?? null,
+        })
         if (isAuthenticated) {
           const favoriteStatus = await checkFavorite(propertyId)
           setIsFavorited(favoriteStatus.isFavorited)
@@ -61,6 +85,62 @@ function PropertyDetails() {
       }
     })()
   }, [id, isAuthenticated])
+
+  const hasCoordinates =
+    property &&
+    typeof property.latitude === 'number' &&
+    typeof property.longitude === 'number' &&
+    Number.isFinite(property.latitude) &&
+    Number.isFinite(property.longitude)
+
+  const latitude = hasCoordinates ? property.latitude! : null
+  const longitude = hasCoordinates ? property.longitude! : null
+
+  const mapEmbedUrl =
+    hasCoordinates && latitude !== null && longitude !== null
+      ? (() => {
+          const delta = 0.01
+          const left = longitude - delta
+          const right = longitude + delta
+          const top = latitude + delta
+          const bottom = latitude - delta
+          return `https://www.openstreetmap.org/export/embed.html?bbox=${left}%2C${bottom}%2C${right}%2C${top}&layer=mapnik&marker=${latitude}%2C${longitude}`
+        })()
+      : null
+
+  const googleMapsUrl =
+    hasCoordinates && latitude !== null && longitude !== null
+      ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+      : null
+
+  const monthlyPayment = (() => {
+    if (!property) {
+      return null
+    }
+
+    const depositPercent = Number(downPayment)
+    const annualRate = Number(interestRate)
+    const years = Number(loanYears)
+
+    if (!Number.isFinite(depositPercent) || !Number.isFinite(annualRate) || !Number.isFinite(years) || years <= 0) {
+      return null
+    }
+
+    const principal = Number(property.price) * (1 - Math.max(0, Math.min(100, depositPercent)) / 100)
+    const monthlyRate = annualRate / 100 / 12
+    const totalPayments = years * 12
+
+    if (principal <= 0) {
+      return 0
+    }
+
+    if (monthlyRate <= 0) {
+      return principal / totalPayments
+    }
+
+    const factor = Math.pow(1 + monthlyRate, totalPayments)
+    return (principal * monthlyRate * factor) / (factor - 1)
+  })()
 
   return (
     <section>
@@ -98,6 +178,35 @@ function PropertyDetails() {
             <p>Year Built: {property.yearBuilt ?? '-'}</p>
           </div>
 
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-lg font-semibold text-slate-100">Location</h3>
+              {googleMapsUrl && (
+                <a
+                  href={googleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-lg border border-slate-700 bg-black px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800"
+                >
+                  Open in Google Maps
+                </a>
+              )}
+            </div>
+            {mapEmbedUrl ? (
+              <div className="mt-3 overflow-hidden rounded-xl border border-slate-700">
+                <iframe
+                  title="Property Location Map"
+                  src={mapEmbedUrl}
+                  className="h-72 w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-slate-400">Map is unavailable for this listing because coordinates are missing.</p>
+            )}
+          </div>
+
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm  ">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Amenities</h3>
             {property.amenities.length > 0 ? (
@@ -121,6 +230,64 @@ function PropertyDetails() {
             <p className="text-slate-600 dark:text-slate-400">{property.agent.email}</p>
             <p className="text-slate-600 dark:text-slate-400">{property.agent.phoneNumber}</p>
             <p className="text-slate-600 dark:text-slate-400">{property.agent.agencyName}</p>
+            <Link
+              to={`/agents/${property.agent.id}`}
+              className="mt-3 inline-flex rounded-lg border border-slate-700 bg-black px-3 py-2 text-xs font-semibold text-slate-100 hover:bg-slate-800"
+            >
+              View Agent Profile
+            </Link>
+          </div>
+
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-100">Mortgage Calculator</h3>
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-400">Down payment %</span>
+                <input
+                  value={downPayment}
+                  onChange={(e) => setDownPayment(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-black px-3 py-2 text-slate-100"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-400">Interest rate %</span>
+                <input
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-black px-3 py-2 text-slate-100"
+                />
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-slate-400">Loan term (years)</span>
+                <input
+                  value={loanYears}
+                  onChange={(e) => setLoanYears(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-black px-3 py-2 text-slate-100"
+                />
+              </label>
+            </div>
+            <p className="mt-4 text-sm text-slate-400">Estimated monthly payment</p>
+            <p className="text-2xl font-bold text-slate-100">
+              {monthlyPayment === null ? '-' : `$${monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-100">Listing Timeline</h3>
+            <div className="mt-3 space-y-2 text-sm text-slate-300">
+              <p>
+                <span className="text-slate-400">Listed:</span>{' '}
+                {new Date(property.createdAt).toLocaleString()}
+              </p>
+              <p>
+                <span className="text-slate-400">Last update:</span>{' '}
+                {new Date(property.updatedAt).toLocaleString()}
+              </p>
+              <p>
+                <span className="text-slate-400">Current status:</span>{' '}
+                {propertyStatusLabels[property.status] ?? `Status ${property.status}`}
+              </p>
+            </div>
           </div>
 
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-sm  ">

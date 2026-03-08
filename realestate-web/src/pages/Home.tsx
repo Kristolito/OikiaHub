@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { resolveImageUrl } from '../services/api'
 import { getProperties, type PropertyListItemResponse } from '../services/propertyService'
+import { getRecentlyViewed, type RecentlyViewedItem } from '../services/recentlyViewedService'
 
 const fallbackFeatured: PropertyListItemResponse[] = [
   {
@@ -49,9 +50,12 @@ const fallbackFeatured: PropertyListItemResponse[] = [
 ]
 
 function Home() {
+  const navigate = useNavigate()
   const [featured, setFeatured] = useState<PropertyListItemResponse[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedItem[]>([])
+  const [heroSearch, setHeroSearch] = useState('')
   const sliderRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -73,6 +77,10 @@ function Home() {
         setLoading(false)
       }
     })()
+  }, [])
+
+  useEffect(() => {
+    setRecentlyViewed(getRecentlyViewed())
   }, [])
 
   const scrollSlider = (direction: 'left' | 'right') => {
@@ -101,6 +109,24 @@ function Home() {
               Browse verified listings, compare neighborhoods, and connect directly with agents in one clean experience.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  const trimmed = heroSearch.trim()
+                  navigate(trimmed ? `/properties?searchTerm=${encodeURIComponent(trimmed)}&page=1` : '/properties')
+                }}
+                className="flex w-full max-w-xl items-center gap-2"
+              >
+                <input
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  placeholder="Search by city, area, title..."
+                  className="w-full rounded-xl border border-slate-700 bg-black px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500"
+                />
+                <button type="submit" className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white">
+                  Search
+                </button>
+              </form>
               <Link to="/properties" className="rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-white">
                 Explore Properties
               </Link>
@@ -132,6 +158,36 @@ function Home() {
           </div>
         </div>
       </div>
+
+      {recentlyViewed.length > 0 && (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-100">Recently Viewed</h2>
+            <p className="text-sm text-slate-400">Jump back to homes you opened recently.</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewed.map((property) => (
+              <article key={property.id} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+                <div className="relative aspect-[16/10] bg-black">
+                  {property.primaryImageUrl ? (
+                    <img src={resolveImageUrl(property.primaryImageUrl)} alt={property.title} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-sm text-slate-500">No image</div>
+                  )}
+                </div>
+                <div className="space-y-2 p-4">
+                  <h3 className="line-clamp-1 text-base font-semibold text-slate-100">{property.title}</h3>
+                  <p className="text-xs text-slate-400">{property.city}, {property.area}</p>
+                  <p className="text-sm font-semibold text-slate-100">${property.price.toLocaleString()}</p>
+                  <Link to={`/properties/${property.id}`} className="text-xs font-semibold text-sky-300 hover:text-sky-200">
+                    View again
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">

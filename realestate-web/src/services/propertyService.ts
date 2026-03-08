@@ -9,6 +9,8 @@ export type PropertyListItemResponse = {
   bedrooms: number
   bathrooms: number
   squareMeters: number
+  latitude?: number | null
+  longitude?: number | null
   listingType: number
   propertyType: number
   primaryImageUrl?: string | null
@@ -57,6 +59,8 @@ export type PropertyDetailsResponse = {
   }
   images: { id: number; imageUrl: string; isPrimary: boolean; sortOrder: number }[]
   amenities: { id: number; name: string }[]
+  createdAt: string
+  updatedAt: string
 }
 
 export type SavePropertyRequest = {
@@ -97,6 +101,10 @@ export type GetPropertiesRequest = {
   maxBathrooms?: number
   minSquareMeters?: number
   maxSquareMeters?: number
+  minLatitude?: number
+  maxLatitude?: number
+  minLongitude?: number
+  maxLongitude?: number
   sortBy?: 'newest' | 'oldest' | 'priceAsc' | 'priceDesc'
   page?: number
   pageSize?: number
@@ -123,6 +131,10 @@ export async function getProperties(query: GetPropertiesRequest = {}) {
       maxBathrooms: query.maxBathrooms,
       minSquareMeters: query.minSquareMeters,
       maxSquareMeters: query.maxSquareMeters,
+      minLatitude: query.minLatitude,
+      maxLatitude: query.maxLatitude,
+      minLongitude: query.minLongitude,
+      maxLongitude: query.maxLongitude,
       sortBy: query.sortBy ?? 'newest',
       page: query.page ?? 1,
       pageSize: query.pageSize ?? 12,

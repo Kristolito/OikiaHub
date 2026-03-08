@@ -13,3 +13,18 @@ body {
 #root {
   @apply min-h-screen;
 }
+
+.oikia-map-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oikia-map-marker span {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: rgb(56 189 248);
+  border: 2px solid rgb(2 6 23);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+}
